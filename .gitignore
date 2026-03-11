@@ -1,33 +1,46 @@
-# Test artifacts
-tests/integration/testdata/
+# Secrets - NEVER commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets/
+.infisical.json
+infisical.json
 
-# Binary
-openclaw-go
+# Build artifacts
+/ui/web/dist/
+/ui/web/node_modules/
+/goclaw
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
 # IDE
 .idea/
 .vscode/
+*.swp
+*.swo
 
 # OS
 .DS_Store
+Thumbs.db
 
-# Environment
-.env*
-!.env.example
+# Logs
+*.log
+logs/
 
-app
-browser-poc
-openclaw-go
-goclaw
-/config.json
-prompt.md
-*.bk.*
+# Temp
+*.tmp
+*.bak
+*.backup
 
-# UI Web (React SPA)
-ui/web/node_modules/
-ui/web/dist/
-ui/web/.vite/
-*.tsbuildinfo
+# Database
+*.db
+*.sqlite
 
 .mcp.json
 tmp
@@ -43,3 +56,8 @@ k8s-*/*
 # Test credentials (never commit)
 tests/**/creds.json
 ui/simple-saas
+
+# Migrations backup (if needed locally)
+migrations.bak/
+config.json
+ui/web/tsconfig.tsbuildinfo
