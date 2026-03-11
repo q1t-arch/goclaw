@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -14,8 +14,15 @@ function CodeBlock({
   children?: React.ReactNode;
 }) {
   const { copied, copy } = useClipboard();
-  const text = String(children).replace(/\n$/, "");
+  const codeRef = useRef<HTMLElement>(null);
   const lang = className?.replace("language-", "") ?? "";
+
+  const handleCopy = () => {
+    if (codeRef.current) {
+      const text = codeRef.current.textContent || "";
+      copy(text);
+    }
+  };
 
   return (
     <div className="not-prose group relative my-4 overflow-hidden rounded-md border">
@@ -23,7 +30,7 @@ function CodeBlock({
         <span>{lang || "code"}</span>
         <button
           type="button"
-          onClick={() => copy(text)}
+          onClick={handleCopy}
           className="cursor-pointer opacity-0 transition-opacity group-hover:opacity-100"
           title="Copy code"
         >
@@ -31,7 +38,7 @@ function CodeBlock({
         </button>
       </div>
       <pre className="overflow-x-auto bg-muted/50 p-4 text-sm text-foreground">
-        <code className={className}>{children}</code>
+        <code ref={codeRef} className={className}>{children}</code>
       </pre>
     </div>
   );
