@@ -61,3 +61,5 @@ ui/simple-saas
 migrations.bak/
 config.json
 ui/web/tsconfig.tsbuildinfo
+start.sh
+start.sh
