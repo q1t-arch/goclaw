@@ -3,7 +3,7 @@ import { useUiStore, type Theme } from "@/stores/use-ui-store";
 
 function applyTheme(theme: Theme) {
   const root = document.documentElement;
-  root.classList.remove("light", "dark");
+  root.classList.remove("light", "dark", "hacker");
 
   if (theme === "system") {
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;

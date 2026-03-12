@@ -2,7 +2,7 @@ import { create } from "zustand";
 import i18n from "@/i18n";
 import { LOCAL_STORAGE_KEYS, type Language } from "@/lib/constants";
 
-export type Theme = "light" | "dark" | "system";
+export type Theme = "light" | "dark" | "hacker" | "system";
 
 interface UiState {
   theme: Theme;

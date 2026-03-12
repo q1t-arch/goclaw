@@ -1,7 +1,7 @@
-import { Moon, Sun, PanelLeftClose, PanelLeftOpen, Menu, LogOut, Bell, Globe, Clock } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, Menu, LogOut, Bell, Globe, Clock } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useUiStore } from "@/stores/use-ui-store";
+import { useUiStore, type Theme } from "@/stores/use-ui-store";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { useIsMobile } from "@/hooks/use-media-query";
 import { usePendingPairingsCount } from "@/hooks/use-pending-pairings-count";
@@ -22,9 +22,6 @@ export function Topbar() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { pendingCount } = usePendingPairingsCount({ showToast: true });
-
-  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-
   const handleSidebarToggle = isMobile
     ? () => setMobileSidebarOpen(true)
     : toggleSidebar;
@@ -89,13 +86,18 @@ export function Topbar() {
           </select>
         </div>
 
-        <button
-          onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="cursor-pointer rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          title={t("toggleTheme")}
-        >
-          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-        </button>
+        <div className="flex items-center gap-1 rounded-md px-2 py-1.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground" title={t("theme")}>
+          <select
+            value={theme}
+            onChange={(e) => setTheme(e.target.value as Theme)}
+            className="cursor-pointer bg-transparent text-xs outline-none"
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="hacker">Hacker</option>
+            <option value="system">System</option>
+          </select>
+        </div>
 
         <button
           onClick={logout}

@@ -10,6 +10,7 @@ import {
   MiniMap,
   type Node,
   type Edge,
+  // @ts-ignore - hacker theme not in ColorMode type
   type ColorMode,
   Handle,
   Position,
@@ -135,6 +136,7 @@ function KGGraphViewInner({ entities, relations, onEntityClick }: KGGraphViewPro
   const { t } = useTranslation("memory");
   const { fitView } = useReactFlow();
   const theme = useUiStore((s) => s.theme);
+  // @ts-ignore - hacker theme not in ColorMode type
   const colorMode: ColorMode = theme === "system" ? "system" : theme;
   // Compute layout synchronously — no per-tick re-renders
   const { layoutNodes, layoutEdges } = useMemo(() => {
