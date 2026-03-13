@@ -56,10 +56,4 @@ k8s-*/*
 # Test credentials (never commit)
 tests/**/creds.json
 ui/simple-saas
-
-# Migrations backup (if needed locally)
-migrations.bak/
-config.json
-ui/web/tsconfig.tsbuildinfo
-start.sh
-start.sh
+*.tar
