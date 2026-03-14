@@ -246,6 +246,7 @@ func (s *PGSessionStore) Save(key string) error {
 	s.mu.RUnlock()
 
 	msgsJSON, _ := json.Marshal(snapshot.Messages)
+	fullMsgsJSON, _ := json.Marshal(snapshot.FullMessages)
 	metaJSON := []byte("{}")
 	if len(snapshot.Metadata) > 0 {
 		metaJSON, _ = json.Marshal(snapshot.Metadata)
@@ -257,7 +258,8 @@ func (s *PGSessionStore) Save(key string) error {
 			input_tokens = $6, output_tokens = $7, compaction_count = $8,
 			memory_flush_compaction_count = $9, memory_flush_at = $10,
 			label = $11, spawned_by = $12, spawn_depth = $13,
-			agent_id = $14, user_id = $15, metadata = $16, updated_at = $17
+			agent_id = $14, user_id = $15, metadata = $16, updated_at = $17,
+			full_messages = $19
 		 WHERE session_key = $18`,
 		msgsJSON, nilStr(snapshot.Summary), nilStr(snapshot.Model), nilStr(snapshot.Provider), nilStr(snapshot.Channel),
 		snapshot.InputTokens, snapshot.OutputTokens, snapshot.CompactionCount,
@@ -265,6 +267,7 @@ func (s *PGSessionStore) Save(key string) error {
 		nilStr(snapshot.Label), nilStr(snapshot.SpawnedBy), snapshot.SpawnDepth,
 		nilSessionUUID(snapshot.AgentUUID), nilStr(snapshot.UserID), metaJSON, snapshot.Updated,
 		key,
+		fullMsgsJSON,
 	)
 	return err
 }
@@ -336,24 +339,31 @@ func (s *PGSessionStore) loadFromDB(key string) *store.SessionData {
 	var createdAt, updatedAt time.Time
 	var metaJSON *[]byte
 
+	var fullMsgsJSON []byte
 	err := s.db.QueryRow(
 		`SELECT session_key, messages, summary, model, provider, channel,
 		 input_tokens, output_tokens, compaction_count,
 		 memory_flush_compaction_count, memory_flush_at,
 		 label, spawned_by, spawn_depth, agent_id, user_id,
-		 COALESCE(metadata, '{}'), created_at, updated_at
+		 COALESCE(metadata, '{}'), created_at, updated_at,
+		 COALESCE(full_messages, '[]')
 		 FROM sessions WHERE session_key = $1`, key,
 	).Scan(&sessionKey, &msgsJSON, &summary, &model, &provider, &channel,
 		&inputTokens, &outputTokens, &compactionCount,
 		&memoryFlushCompactionCount, &memoryFlushAt,
 		&label, &spawnedBy, &spawnDepth, &agentID, &userID,
-		&metaJSON, &createdAt, &updatedAt)
+		&metaJSON, &createdAt, &updatedAt, &fullMsgsJSON)
 	if err != nil {
 		return nil
 	}
 
 	var msgs []providers.Message
 	json.Unmarshal(msgsJSON, &msgs)
+
+	var fullMsgs []providers.Message
+	if len(fullMsgsJSON) > 0 {
+		json.Unmarshal(fullMsgsJSON, &fullMsgs)
+	}
 
 	var meta map[string]string
 	if metaJSON != nil {
@@ -363,6 +373,7 @@ func (s *PGSessionStore) loadFromDB(key string) *store.SessionData {
 	return &store.SessionData{
 		Key:                        sessionKey,
 		Messages:                   msgs,
+		FullMessages:               fullMsgs,
 		Summary:                    derefStr(summary),
 		Created:                    createdAt,
 		Updated:                    updatedAt,

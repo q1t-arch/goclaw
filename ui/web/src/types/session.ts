@@ -27,7 +27,7 @@ export interface SessionPreview {
 
 /** Message format from Go providers.Message */
 export interface Message {
-  role: "user" | "assistant" | "tool";
+  role: "user" | "assistant" | "tool" | "system";
   content: string;
   thinking?: string;
   tool_calls?: ToolCall[];

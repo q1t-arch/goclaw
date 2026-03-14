@@ -1,6 +1,7 @@
 package pg
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/nextlevelbuilder/goclaw/internal/providers"
@@ -13,6 +14,14 @@ func (s *PGSessionStore) TruncateHistory(key string, keepLast int) {
 		if keepLast <= 0 {
 			data.Messages = []providers.Message{}
 		} else if len(data.Messages) > keepLast {
+			// Insert compaction marker into full_messages at the truncation point.
+			// CompactionCount is incremented by IncrementCompaction after this call,
+			// so +1 gives the correct upcoming compaction number.
+			marker := providers.Message{
+				Role:    "system",
+				Content: fmt.Sprintf("[Compaction #%d — model receives condensed context from this point]", data.CompactionCount+1),
+			}
+			data.FullMessages = append(data.FullMessages, marker)
 			data.Messages = data.Messages[len(data.Messages)-keepLast:]
 		}
 		data.Updated = time.Now()

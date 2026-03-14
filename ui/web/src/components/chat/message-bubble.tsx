@@ -11,9 +11,20 @@ interface MessageBubbleProps {
 export function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.role === "user";
   const isTool = message.role === "tool";
+  const isCompaction = message.role === "system";
 
   if (isTool) {
     return null; // Tool messages are shown inline with assistant messages
+  }
+
+  if (isCompaction) {
+    return (
+      <div className="flex items-center gap-3 py-1">
+        <div className="h-px flex-1 bg-border" />
+        <span className="text-[11px] text-muted-foreground px-2 shrink-0">{message.content}</span>
+        <div className="h-px flex-1 bg-border" />
+      </div>
+    );
   }
 
   const isAssistant = message.role === "assistant";

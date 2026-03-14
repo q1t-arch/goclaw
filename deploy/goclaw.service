@@ -6,7 +6,7 @@
   [Service]
   Type=simple
   User=ubuntu
-  Environment=GOCLAW_AUTO_UPGRADE=true
+  Environment=GOCLAW_AUTO_UPGRADE=false
   Environment=GOCLAW_TRACE_VERBOSE=1
   WorkingDirectory=/home/ubuntu/goclaw
   ExecStart=/usr/bin/infisical run --env=dev --projectId=3f4cc36f-0f7c-40d7-8d54-93dd6b973d8b --domain=https://eu.infisical.com -- /home/ubuntu/goclaw/goclaw
