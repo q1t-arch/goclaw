@@ -73,12 +73,27 @@ func (s *PGMemoryStore) PutDocument(ctx context.Context, agentID, userID, path, 
 		uid = &userID
 	}
 
+	// Read compact metadata from context (set by memoryflush for compact writes)
+	compactSession := store.CompactSessionKeyFromContext(ctx)
+	compactNumber := store.CompactNumberFromContext(ctx)
+
+	var sessionKeyPtr *string
+	var compactNumPtr *int
+	if compactSession != "" {
+		sessionKeyPtr = &compactSession
+	}
+	if compactNumber > 0 {
+		compactNumPtr = &compactNumber
+	}
+
 	_, err := s.db.ExecContext(ctx,
-		`INSERT INTO memory_documents (id, agent_id, user_id, path, content, hash, updated_at)
-		 VALUES ($1, $2, $3, $4, $5, $6, $7)
+		`INSERT INTO memory_documents (id, agent_id, user_id, path, content, hash, updated_at, session_key, compact_number)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		 ON CONFLICT (agent_id, COALESCE(user_id, ''), path)
-		 DO UPDATE SET content = EXCLUDED.content, hash = EXCLUDED.hash, updated_at = EXCLUDED.updated_at`,
-		id, aid, uid, path, content, hash, now,
+		 DO UPDATE SET content = EXCLUDED.content, hash = EXCLUDED.hash, updated_at = EXCLUDED.updated_at,
+		               session_key = COALESCE(EXCLUDED.session_key, memory_documents.session_key),
+		               compact_number = COALESCE(EXCLUDED.compact_number, memory_documents.compact_number)`,
+		id, aid, uid, path, content, hash, now, sessionKeyPtr, compactNumPtr,
 	)
 	return err
 }
