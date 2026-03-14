@@ -63,19 +63,20 @@ func (l *Loop) compactMessagesInPlace(ctx context.Context, messages []providers.
 	resp, err := l.provider.Chat(sctx, providers.ChatRequest{
 		Messages: []providers.Message{{
 			Role:    "user",
-			Content: "Provide a concise summary of this conversation, preserving key findings, data, and context:\n\n" + sb.String(),
+			Content: "Summarize the CURRENT STATE of this conversation in 300-500 tokens.\nFocus only on: current task status, last decision made, next step.\nDo NOT accumulate — describe only what is happening RIGHT NOW:\n\n" + sb.String(),
 		}},
 		Model:   l.model,
-		Options: map[string]any{"max_tokens": 1024, "temperature": 0.3},
+		Options: map[string]any{"max_tokens": 500, "temperature": 0.3},
 	})
 	if err != nil {
 		slog.Warn("mid_loop_compaction_failed", "agent", l.id, "error", err)
 		return nil
 	}
 
+	const midLoopReminder = "\n\n[If current context is insufficient — use memory_search to find this session's compacts or search across all history]"
 	summary := providers.Message{
 		Role:    "user",
-		Content: "[Summary of earlier conversation]\n" + SanitizeAssistantContent(resp.Content),
+		Content: "[Summary of earlier conversation]\n" + SanitizeAssistantContent(resp.Content) + midLoopReminder,
 	}
 	result := make([]providers.Message, 0, 1+keepCount)
 	result = append(result, summary)
