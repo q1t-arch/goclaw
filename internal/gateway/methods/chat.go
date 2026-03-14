@@ -237,7 +237,7 @@ func (m *ChatMethods) handleHistory(ctx context.Context, client *gateway.Client,
 		sessionKey = sessions.SessionKey(params.AgentID, "ws-"+client.ID())
 	}
 
-	history := m.sessions.GetHistory(sessionKey)
+	history := m.sessions.GetFullHistory(sessionKey)
 
 	client.SendResponse(protocol.NewOKResponse(req.ID, map[string]any{
 		"messages": history,
