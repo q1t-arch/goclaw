@@ -124,3 +124,30 @@ func LocaleFromContext(ctx context.Context) string {
 	}
 	return "en"
 }
+
+// WithCompactSessionKey stores the session_key for a memory compact write.
+// Used by memoryflush to tag memory_documents with the originating session.
+func WithCompactSessionKey(ctx context.Context, key string) context.Context {
+	return context.WithValue(ctx, contextKey("goclaw_compact_session_key"), key)
+}
+
+// CompactSessionKeyFromContext extracts the compact session key. Returns "" if not set.
+func CompactSessionKeyFromContext(ctx context.Context) string {
+	if v, ok := ctx.Value(contextKey("goclaw_compact_session_key")).(string); ok {
+		return v
+	}
+	return ""
+}
+
+// WithCompactNumber stores the compact number for a memory compact write.
+func WithCompactNumber(ctx context.Context, n int) context.Context {
+	return context.WithValue(ctx, contextKey("goclaw_compact_number"), n)
+}
+
+// CompactNumberFromContext extracts the compact number. Returns 0 if not set.
+func CompactNumberFromContext(ctx context.Context) int {
+	if v, ok := ctx.Value(contextKey("goclaw_compact_number")).(int); ok {
+		return v
+	}
+	return 0
+}
