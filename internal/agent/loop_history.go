@@ -417,7 +417,6 @@ func (l *Loop) maybeSummarize(ctx context.Context, sessionKey string) {
 		sctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 		defer cancel()
 
-		summary := l.sessions.GetSummary(sessionKey)
 		toSummarize := history[:len(history)-keepLast]
 
 		var sb strings.Builder
@@ -434,9 +433,10 @@ func (l *Loop) maybeSummarize(ctx context.Context, sessionKey string) {
 		}
 
 		var prompt strings.Builder
-		prompt.WriteString("Provide a concise summary of this conversation, preserving key context:\n")
+		prompt.WriteString("Summarize the CURRENT STATE of this conversation in 300-500 tokens.\n")
+		prompt.WriteString("Focus only on: current task status, last decision made, next step.\n")
+		prompt.WriteString("Do NOT accumulate previous summaries — describe only what is happening RIGHT NOW.\n")
 		if len(mediaKinds) > 0 {
-			// Deduplicate and count media types for a compact note.
 			counts := make(map[string]int)
 			for _, k := range mediaKinds {
 				counts[k]++
@@ -452,22 +452,22 @@ func (l *Loop) maybeSummarize(ctx context.Context, sessionKey string) {
 			}
 			prompt.WriteString(") which are no longer in context. Mention briefly if relevant.\n")
 		}
-		if summary != "" {
-			prompt.WriteString("Existing context: " + summary + "\n")
-		}
 		prompt.WriteString("\n" + sb.String())
 
 		resp, err := l.provider.Chat(sctx, providers.ChatRequest{
 			Messages: []providers.Message{{Role: "user", Content: prompt.String()}},
 			Model:    l.model,
-			Options:  map[string]any{"max_tokens": 1024, "temperature": 0.3},
+			Options:  map[string]any{"max_tokens": 500, "temperature": 0.3},
 		})
 		if err != nil {
 			slog.Warn("summarization failed", "session", sessionKey, "error", err)
 			return
 		}
 
-		l.sessions.SetSummary(sessionKey, SanitizeAssistantContent(resp.Content))
+		// Append reminder so agent knows how to recover deeper context when needed.
+		rollingText := SanitizeAssistantContent(resp.Content)
+		const memoryReminder = "\n\n[If current context is insufficient — use memory_search to find this session's compacts or search across all history]"
+		l.sessions.SetSummary(sessionKey, rollingText+memoryReminder)
 		l.sessions.TruncateHistory(sessionKey, keepLast)
 		l.sessions.IncrementCompaction(sessionKey)
 		l.sessions.Save(sessionKey)
