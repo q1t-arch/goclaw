@@ -28,6 +28,7 @@ type MemorySearchOptions struct {
 	MinScore     float64
 	Source       string  // "memory", "sessions", ""
 	PathPrefix   string
+	SessionKey   string  // filter results to a specific session's compacts
 	VectorWeight float64 // per-agent override (0 = use store default)
 	TextWeight   float64 // per-agent override (0 = use store default)
 }
