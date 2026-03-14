@@ -10,7 +10,8 @@ import (
 // SessionData holds conversation state for one session.
 type SessionData struct {
 	Key      string              `json:"key"`
-	Messages []providers.Message `json:"messages"`
+	Messages     []providers.Message `json:"messages"`
+	FullMessages []providers.Message `json:"fullMessages,omitempty"`
 	Summary  string              `json:"summary,omitempty"`
 	Created  time.Time           `json:"created"`
 	Updated  time.Time           `json:"updated"`
@@ -86,6 +87,7 @@ type SessionStore interface {
 	GetOrCreate(key string) *SessionData
 	AddMessage(key string, msg providers.Message)
 	GetHistory(key string) []providers.Message
+	GetFullHistory(key string) []providers.Message
 	GetSummary(key string) string
 	SetSummary(key, summary string)
 	SetLabel(key, label string)
