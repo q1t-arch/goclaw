@@ -53,6 +53,10 @@ func (t *MemorySearchTool) Parameters() map[string]any {
 				"type":        "number",
 				"description": "Minimum relevance score threshold (0-1)",
 			},
+			"session": map[string]any{
+				"type":        "string",
+				"description": "Optional session key to restrict results to a specific session's compacts (e.g. \"agent:origo:abc123\"). Use when you need context from one specific conversation.",
+			},
 		},
 		"required": []string{"query"},
 	}
@@ -72,6 +76,7 @@ func (t *MemorySearchTool) Execute(ctx context.Context, args map[string]any) *Re
 	if ms, ok := args["minScore"].(float64); ok {
 		minScore = ms
 	}
+	sessionKey, _ := args["session"].(string)
 
 	agentID := store.AgentIDFromContext(ctx)
 	if t.memStore == nil || agentID == uuid.Nil {
@@ -82,6 +87,7 @@ func (t *MemorySearchTool) Execute(ctx context.Context, args map[string]any) *Re
 	searchOpts := store.MemorySearchOptions{
 		MaxResults: maxResults,
 		MinScore:   minScore,
+		SessionKey: sessionKey,
 	}
 	// Apply per-agent memory config overrides if set
 	if mc := MemoryConfigFromCtx(ctx); mc != nil {
@@ -143,7 +149,11 @@ func (t *MemoryGetTool) Parameters() map[string]any {
 		"properties": map[string]any{
 			"path": map[string]any{
 				"type":        "string",
-				"description": "Relative path to memory file (e.g., 'MEMORY.md' or 'memory/notes.md')",
+				"description": "Relative path to memory file (e.g., 'MEMORY.md' or 'memory/notes.md'). Omit when using compact.",
+			},
+			"compact": map[string]any{
+				"type":        "number",
+				"description": "Compact number shorthand: reads memory/compact_{N}.md. Use instead of path when retrieving a specific compaction snapshot.",
 			},
 			"from": map[string]any{
 				"type":        "number",
@@ -154,14 +164,19 @@ func (t *MemoryGetTool) Parameters() map[string]any {
 				"description": "Number of lines to read. Omit to read entire file.",
 			},
 		},
-		"required": []string{"path"},
 	}
 }
 
 func (t *MemoryGetTool) Execute(ctx context.Context, args map[string]any) *Result {
 	path, _ := args["path"].(string)
+
+	// Compact shorthand: compact=N resolves to memory/compact_N.md
+	if compact, ok := args["compact"].(float64); ok && compact > 0 {
+		path = fmt.Sprintf("memory/compact_%d.md", int(compact))
+	}
+
 	if path == "" {
-		return ErrorResult("path parameter is required")
+		return ErrorResult("path or compact parameter is required")
 	}
 
 	var fromLine, numLines int
