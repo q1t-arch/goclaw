@@ -70,8 +70,55 @@ func (s *PGSessionStore) AddMessage(key string, msg providers.Message) {
 	defer s.mu.Unlock()
 
 	data := s.getOrInit(key)
+	// Backfill full_messages from messages on first use (for sessions created before this feature)
+	if len(data.FullMessages) == 0 && len(data.Messages) > 0 {
+		data.FullMessages = make([]providers.Message, len(data.Messages))
+		copy(data.FullMessages, data.Messages)
+	}
 	data.Messages = append(data.Messages, msg)
+	data.FullMessages = append(data.FullMessages, msg)
 	data.Updated = time.Now()
+}
+
+func (s *PGSessionStore) GetFullHistory(key string) []providers.Message {
+	s.mu.RLock()
+	if data, ok := s.cache[key]; ok {
+		full := data.FullMessages
+		if len(full) == 0 {
+			full = data.Messages
+		}
+		msgs := make([]providers.Message, len(full))
+		copy(msgs, full)
+		s.mu.RUnlock()
+		return msgs
+	}
+	s.mu.RUnlock()
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if data, ok := s.cache[key]; ok {
+		full := data.FullMessages
+		if len(full) == 0 {
+			full = data.Messages
+		}
+		msgs := make([]providers.Message, len(full))
+		copy(msgs, full)
+		return msgs
+	}
+
+	data := s.loadFromDB(key)
+	if data == nil {
+		return nil
+	}
+	s.cache[key] = data
+	full := data.FullMessages
+	if len(full) == 0 {
+		full = data.Messages
+	}
+	msgs := make([]providers.Message, len(full))
+	copy(msgs, full)
+	return msgs
 }
 
 func (s *PGSessionStore) GetHistory(key string) []providers.Message {
