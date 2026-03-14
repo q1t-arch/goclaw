@@ -69,7 +69,7 @@ export function ChatPage() {
   const isOwn = !sessionKey || isOwnSession(sessionKey, userId);
 
   const handleMessageAdded = useCallback(
-    (msg: { role: "user" | "assistant" | "tool"; content: string; timestamp?: number }) => {
+    (msg: { role: "user" | "assistant" | "tool" | "system"; content: string; timestamp?: number }) => {
       addLocalMessage(msg);
     },
     [addLocalMessage],
