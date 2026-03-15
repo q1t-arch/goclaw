@@ -27,6 +27,7 @@ type SessionData struct {
 	CompactionCount            int    `json:"compactionCount,omitempty"`
 	MemoryFlushCompactionCount int    `json:"memoryFlushCompactionCount,omitempty"`
 	MemoryFlushAt              int64  `json:"memoryFlushAt,omitempty"`
+	NumericID                   int64  `json:"numericId,omitempty"`
 	Label                      string `json:"label,omitempty"`
 	SpawnedBy                  string            `json:"spawnedBy,omitempty"`
 	SpawnDepth                 int               `json:"spawnDepth,omitempty"`
@@ -40,6 +41,7 @@ type SessionData struct {
 
 // SessionInfo is lightweight session metadata for listing.
 type SessionInfo struct {
+	NumericID     int64             `json:"numericId,omitempty"`
 	Key          string            `json:"key"`
 	MessageCount int               `json:"messageCount"`
 	Created      time.Time         `json:"created"`
@@ -90,6 +92,7 @@ type SessionStore interface {
 	GetFullHistory(key string) []providers.Message
 	GetSummary(key string) string
 	SetSummary(key, summary string)
+	GetNumericID(key string) int64
 	SetLabel(key, label string)
 	SetAgentInfo(key string, agentUUID uuid.UUID, userID string)
 	UpdateMetadata(key, model, provider, channel string)
