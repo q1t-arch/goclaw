@@ -1001,6 +1001,22 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 
 	l.sessions.Save(req.SessionKey)
 
+	// Auto-generate session label after the first exchange (async, non-blocking).
+	// len(history) == 0 means this is the very first turn of the session.
+	if len(history) == 0 {
+		var firstUser, firstAssistant string
+		for _, m := range pendingMsgs {
+			if m.Role == "user" && firstUser == "" {
+				firstUser = m.Content
+			} else if m.Role == "assistant" && firstAssistant == "" {
+				firstAssistant = m.Content
+			}
+		}
+		if firstUser != "" && firstAssistant != "" {
+			go l.generateAndSetLabel(req.SessionKey, firstUser, firstAssistant)
+		}
+	}
+
 	// Bootstrap auto-cleanup: after enough conversation turns, remove BOOTSTRAP.md
 	// as a safety net in case the LLM didn't clear it itself.
 	// Bootstrap typically completes in 2-3 turns; we auto-cleanup after 3 user messages.
