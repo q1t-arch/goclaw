@@ -18,10 +18,10 @@ func (s *PGSessionStore) List(agentID string) []store.SessionInfo {
 	if agentID != "" {
 		prefix := "agent:" + agentID + ":%"
 		rows, err = s.db.Query(
-			"SELECT session_key, messages, created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(numeric_id, 0) FROM sessions WHERE session_key LIKE $1 ORDER BY updated_at DESC", prefix)
+			"SELECT session_key, messages, created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(agent_session_num, 0) FROM sessions WHERE session_key LIKE $1 ORDER BY updated_at DESC", prefix)
 	} else {
 		rows, err = s.db.Query(
-			"SELECT session_key, messages, created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(numeric_id, 0) FROM sessions ORDER BY updated_at DESC")
+			"SELECT session_key, messages, created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(agent_session_num, 0) FROM sessions ORDER BY updated_at DESC")
 	}
 	if err != nil {
 		return nil
@@ -87,11 +87,11 @@ func (s *PGSessionStore) ListPaged(opts store.SessionListOpts) store.SessionList
 	var selectArgs []any
 
 	if opts.AgentID != "" {
-		selectQ = `SELECT session_key, jsonb_array_length(messages), created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(numeric_id, 0)
+		selectQ = `SELECT session_key, jsonb_array_length(messages), created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(agent_session_num, 0)
 		           FROM sessions WHERE session_key LIKE $1 ORDER BY updated_at DESC LIMIT $2 OFFSET $3`
 		selectArgs = []any{whereArgs[0], limit, offset}
 	} else {
-		selectQ = `SELECT session_key, jsonb_array_length(messages), created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(numeric_id, 0)
+		selectQ = `SELECT session_key, jsonb_array_length(messages), created_at, updated_at, label, channel, user_id, COALESCE(metadata, '{}'), COALESCE(agent_session_num, 0)
 		           FROM sessions ORDER BY updated_at DESC LIMIT $1 OFFSET $2`
 		selectArgs = []any{limit, offset}
 	}
@@ -168,7 +168,7 @@ func (s *PGSessionStore) ListPagedRich(opts store.SessionListOpts) store.Session
 		COALESCE(a.display_name, ''),
 		octet_length(s.messages::text) / 4 + 12000,
 		COALESCE(a.context_window, 200000),
-		s.compaction_count, COALESCE(s.numeric_id, 0)`
+		s.compaction_count, COALESCE(s.agent_session_num, 0)`
 
 	if opts.AgentID != "" {
 		selectQ = `SELECT ` + richCols + `
@@ -311,7 +311,7 @@ func (s *PGSessionStore) GetNumericID(key string) int64 {
 	}
 	s.mu.RUnlock()
 	var id int64
-	s.db.QueryRow(`SELECT COALESCE(numeric_id, 0) FROM sessions WHERE session_key = $1`, key).Scan(&id)
+	s.db.QueryRow(`SELECT COALESCE(agent_session_num, 0) FROM sessions WHERE session_key = $1`, key).Scan(&id)
 	return id
 }
 
@@ -345,7 +345,7 @@ func (s *PGSessionStore) getOrInit(key string) *store.SessionData {
 		 VALUES ($1, $2, $3, $4, $5) ON CONFLICT (session_key) DO NOTHING`,
 		uuid.Must(uuid.NewV7()), key, msgsJSON, now, now,
 	)
-	s.db.QueryRow(`SELECT COALESCE(numeric_id, 0) FROM sessions WHERE session_key = $1`, key).Scan(&data.NumericID)
+	s.db.QueryRow(`SELECT COALESCE(agent_session_num, 0) FROM sessions WHERE session_key = $1`, key).Scan(&data.NumericID)
 	return data
 }
 
@@ -368,7 +368,7 @@ func (s *PGSessionStore) loadFromDB(key string) *store.SessionData {
 		 memory_flush_compaction_count, memory_flush_at,
 		 label, spawned_by, spawn_depth, agent_id, user_id,
 		 COALESCE(metadata, '{}'), created_at, updated_at,
-		 COALESCE(full_messages, '[]'), COALESCE(numeric_id, 0)
+		 COALESCE(full_messages, '[]'), COALESCE(agent_session_num, 0)
 		 FROM sessions WHERE session_key = $1`, key,
 	).Scan(&sessionKey, &msgsJSON, &summary, &model, &provider, &channel,
 		&inputTokens, &outputTokens, &compactionCount,
