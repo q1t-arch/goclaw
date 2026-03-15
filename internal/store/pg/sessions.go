@@ -61,6 +61,7 @@ func (s *PGSessionStore) GetOrCreate(key string) *store.SessionData {
 		 VALUES ($1, $2, $3, $4, $5) ON CONFLICT (session_key) DO NOTHING`,
 		uuid.Must(uuid.NewV7()), key, msgsJSON, now, now,
 	)
+	s.db.QueryRow(`SELECT COALESCE(numeric_id, 0) FROM sessions WHERE session_key = $1`, key).Scan(&data.NumericID)
 
 	return data
 }
