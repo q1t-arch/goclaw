@@ -12,20 +12,34 @@ import (
 )
 
 // DefaultMemoryFlushSystemPrompt is the system prompt for structured extraction.
-const DefaultMemoryFlushSystemPrompt = "You are extracting facts from a technical conversation for permanent storage. Be exhaustive."
+const DefaultMemoryFlushSystemPrompt = "Ты извлекаешь ключевую информацию из разговора для сохранения в памяти. Этот документ используется в двух случаях: во время текущей сессии — когда контекст вытесняется и агент ищет что обсуждалось ранее; в будущих сессиях — для восстановления контекста прошлой работы. Пиши на русском языке. Будь исчерпывающим и конкретным — записывай точные значения, не общие фразы."
 
 // structuredExtractionPrompt is the user prompt for Go-controlled compact extraction.
-const structuredExtractionPrompt = `Extract all important information from this conversation into the following categories.
-Be exhaustive — include every specific detail, value, and decision.
+const structuredExtractionPrompt = `Извлеки всю важную информацию из этого разговора в следующие категории.
+ВАЖНО: пиши конкретные значения, не общие описания.
+Неправильно: «порт был изменён». Правильно: «порт изменён с 3000 на 3456».
+Неправильно: «добавлен новый агент». Правильно: «добавлен агент Euler, модель claude-sonnet-4, роль архитектор».
 
-DECISIONS: every decision made and its rationale
-CONFIGS: every configuration value, path, file name, setting, ID, URL, port mentioned
-TASKS: what was completed, what is pending, what is blocked and why
-FACTS: specific data points — commands, error messages, values, versions
-ERRORS: problems encountered and their solutions
-OPEN QUESTIONS: unresolved items, things to check later
+КОНТЕКСТ
+Кто пользователь, над каким проектом/задачей работали, какова была основная цель сессии.
 
-Respond with the full structured document. If a category is empty, write "none".`
+РЕШЕНИЯ
+Каждое принятое решение и его обоснование. Включай отвергнутые альтернативы если они обсуждались.
+
+КОНФИГУРАЦИЯ
+Все точные значения: пути к файлам, порты, ID, URL, переменные окружения, настройки, команды.
+
+ЗАДАЧИ
+Что выполнено, что в процессе, что заблокировано и почему.
+
+ОШИБКИ И РЕШЕНИЯ
+Проблемы с которыми столкнулись и как их решили. Точные сообщения об ошибках.
+
+ОТКРЫТЫЕ ВОПРОСЫ
+Нерешённые вопросы, вещи которые нужно проверить или обсудить позже.
+
+Если категория пуста — пиши «нет».
+Отвечай только структурированным документом, без вступлений.`
 
 
 // MemoryFlushSettings holds resolved flush config with defaults applied.
