@@ -41,7 +41,8 @@ export function SessionSwitcher({
       {sessions.map((session) => {
         const parsed = parseSessionKey(session.key);
         const isActive = session.key === activeKey;
-        const label = session.metadata?.chat_title || session.metadata?.display_name || session.label || parsed.scope || session.key;
+        const baseLabel = session.metadata?.chat_title || session.metadata?.display_name || session.label || parsed.scope || session.key;
+        const label = session.numericId ? `#${session.numericId} — ${baseLabel}` : baseLabel;
 
         return (
           <button

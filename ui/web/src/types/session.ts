@@ -1,6 +1,7 @@
 /** Session data types matching Go internal/store/session_store.go */
 
 export interface SessionInfo {
+  numericId?: number;
   key: string;
   messageCount: number;
   created: string;
