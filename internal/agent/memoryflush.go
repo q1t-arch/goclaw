@@ -149,7 +149,13 @@ func (l *Loop) runMemoryFlush(ctx context.Context, sessionKey string, settings *
 
 	// Compact number = current count + 1 (IncrementCompaction runs after TruncateHistory)
 	compactNum := l.sessions.GetCompactionCount(sessionKey) + 1
-	path := fmt.Sprintf("memory/compact_%d.md", compactNum)
+	numericID := l.sessions.GetNumericID(sessionKey)
+	var path string
+	if numericID > 0 {
+		path = fmt.Sprintf("memory/sessions/%d/compact_%d.md", numericID, compactNum)
+	} else {
+		path = fmt.Sprintf("memory/compact_%d.md", compactNum)
+	}
 
 	// Enrich context with compact metadata so PutDocument can tag memory_documents
 	writeCtx := store.WithCompactSessionKey(flushCtx, sessionKey)
