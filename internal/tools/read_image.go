@@ -2,11 +2,19 @@ package tools
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"log/slog"
+	"mime"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/nextlevelbuilder/goclaw/internal/providers"
 )
+
+// maxImageBytes is the safety limit for reading image files (10MB).
+const maxImageBytes = 10 * 1024 * 1024
 
 // --- Context helpers for media images ---
 
@@ -38,11 +46,12 @@ var visionModelDefaults = map[string]string{
 
 // ReadImageTool uses a vision-capable provider to describe images attached to the current message.
 type ReadImageTool struct {
-	registry *providers.Registry
+	registry    *providers.Registry
+	mediaLoader MediaPathLoader
 }
 
-func NewReadImageTool(registry *providers.Registry) *ReadImageTool {
-	return &ReadImageTool{registry: registry}
+func NewReadImageTool(registry *providers.Registry, mediaLoader MediaPathLoader) *ReadImageTool {
+	return &ReadImageTool{registry: registry, mediaLoader: mediaLoader}
 }
 
 func (t *ReadImageTool) Name() string { return "read_image" }
@@ -59,6 +68,10 @@ func (t *ReadImageTool) Parameters() map[string]any {
 				"type":        "string",
 				"description": "What you want to know about the image(s). E.g. 'Describe this image in detail' or 'What text is in this image?'",
 			},
+			"media_id": map[string]any{
+				"type":        "string",
+				"description": "Optional: media ID from <media:image id=\"...\"> tag. Use this when the user sent an image in the chat.",
+			},
 		},
 		"required": []string{"prompt"},
 	}
@@ -69,16 +82,42 @@ func (t *ReadImageTool) Execute(ctx context.Context, args map[string]any) *Resul
 	if prompt == "" {
 		prompt = "Describe this image in detail."
 	}
+	mediaID, _ := args["media_id"].(string)
 
-	images := MediaImagesFromCtx(ctx)
-	if len(images) == 0 {
-		return ErrorResult("No images available in this conversation. The user may not have sent an image.")
+	// Priority 1: load by media_id from persistent media store (works in stateless MCP mode)
+	if mediaID != "" && t.mediaLoader != nil {
+		// Sanitize: LLM may pass literal tag string instead of UUID
+		if !strings.Contains(mediaID, "<") && !strings.Contains(mediaID, "media:") {
+			if p, err := t.mediaLoader.LoadPath(mediaID); err == nil {
+				mimeType := imageToolInferMime(p)
+				if mimeType == "" {
+					mimeType = "image/jpeg"
+				}
+				data, err := os.ReadFile(p)
+				if err == nil && len(data) <= maxImageBytes {
+					images := []providers.ImageContent{{
+						MimeType: mimeType,
+						Data:     base64.StdEncoding.EncodeToString(data),
+					}}
+					return t.runVision(ctx, prompt, images)
+				}
+			}
+		}
 	}
 
+	// Priority 2: context images (inline agent mode / path-based)
+	images := MediaImagesFromCtx(ctx)
+	if len(images) == 0 {
+		return ErrorResult("No images available. Either send an image in the chat (use media_id from <media:image> tag) or provide a file path with the 'path' parameter.")
+	}
+	return t.runVision(ctx, prompt, images)
+}
+
+// runVision executes the vision provider chain with the given images.
+func (t *ReadImageTool) runVision(ctx context.Context, prompt string, images []providers.ImageContent) *Result {
 	chain := ResolveMediaProviderChain(ctx, "read_image", "", "",
 		visionProviderPriority, visionModelDefaults, t.registry)
 
-	// Inject prompt and images into each chain entry's params
 	for i := range chain {
 		if chain[i].Params == nil {
 			chain[i].Params = make(map[string]any)
@@ -97,6 +136,26 @@ func (t *ReadImageTool) Execute(ctx context.Context, args map[string]any) *Resul
 	result.Provider = chainResult.Provider
 	result.Model = chainResult.Model
 	return result
+}
+
+// imageToolInferMime returns the MIME type for common image extensions, or "" if unknown.
+func imageToolInferMime(path string) string {
+	ext := strings.ToLower(filepath.Ext(path))
+	if t := mime.TypeByExtension(ext); t != "" {
+		return t
+	}
+	switch ext {
+	case ".jpg", ".jpeg":
+		return "image/jpeg"
+	case ".png":
+		return "image/png"
+	case ".gif":
+		return "image/gif"
+	case ".webp":
+		return "image/webp"
+	default:
+		return ""
+	}
 }
 
 // callProvider dispatches the vision call using provider.Chat().

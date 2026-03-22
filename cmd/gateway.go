@@ -157,8 +157,7 @@ func runGateway() {
 	slog.Info("web_fetch tool enabled", "policy", cfg.Tools.WebFetch.Policy, "blocked", len(cfg.Tools.WebFetch.BlockedDomains))
 
 	// Vision fallback tool (for non-vision providers like MiniMax)
-	toolsReg.Register(tools.NewReadImageTool(providerRegistry))
-	toolsReg.Register(tools.NewCreateImageTool(providerRegistry))
+		toolsReg.Register(tools.NewCreateImageTool(providerRegistry))
 
 	// Audio generation tool (MiniMax music + ElevenLabs sound effects)
 	toolsReg.Register(tools.NewCreateAudioTool(providerRegistry,

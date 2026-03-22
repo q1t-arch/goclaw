@@ -318,3 +318,40 @@ func inferImageMime(path string) string {
 		return ""
 	}
 }
+
+// enrichImageIDs updates the last user message to embed persisted media IDs
+// in <media:image> tags so the LLM can reference them via read_image tool.
+// Without this, the LLM sees plain <media:image> and cannot pass a valid media_id.
+// Replaces the LAST bare tag (current message) rather than the first (which may be
+// in group history context), so the current turn's media gets the correct ID.
+func (l *Loop) enrichImageIDs(messages []providers.Message, refs []providers.MediaRef) {
+	if len(messages) == 0 {
+		return
+	}
+	lastIdx := -1
+	for i := len(messages) - 1; i >= 0; i-- {
+		if messages[i].Role == "user" {
+			lastIdx = i
+			break
+		}
+	}
+	if lastIdx < 0 {
+		return
+	}
+
+	content := messages[lastIdx].Content
+	for _, ref := range refs {
+		if ref.Kind != "image" {
+			continue
+		}
+		idAttr := fmt.Sprintf(" id=%q", ref.ID)
+
+		// Replace the LAST bare <media:image> with <media:image id="uuid">
+		bare := "<media:image>"
+		if idx := strings.LastIndex(content, bare); idx >= 0 {
+			content = content[:idx] + "<media:image" + idAttr + ">" + content[idx+len(bare):]
+			continue
+		}
+	}
+	messages[lastIdx].Content = content
+}

@@ -82,6 +82,7 @@ func wireExtras(
 		toolsReg.Register(tools.NewReadDocumentTool(providerReg, mediaStore))
 		toolsReg.Register(tools.NewReadAudioTool(providerReg, mediaStore))
 		toolsReg.Register(tools.NewReadVideoTool(providerReg, mediaStore))
+		toolsReg.Register(tools.NewReadImageTool(providerReg, mediaStore))
 		toolsReg.Register(tools.NewCreateVideoTool(providerReg))
 		slog.Info("media tools registered", "tools", "read_document,read_audio,read_video,create_video")
 	}
