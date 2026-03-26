@@ -29,5 +29,10 @@
     "viewRelease": "Xem chi tiết →"
   },
   "systemSettings": "Cài đặt hệ thống",
-  "toggleTheme": "Chuyển đổi giao diện"
+  "toggleTheme": "Chuyển đổi giao diện",
+  "colorScheme": "Màu sắc",
+  "colorSchemes": {
+    "default": "Mặc định",
+    "neon": "Neon"
+  }
 }

@@ -1,4 +1,4 @@
-import { Moon, Sun, PanelLeftClose, PanelLeftOpen, Menu, LogOut, Globe, Clock, Building2, ChevronDown, Check, User, KeyRound, Info, Settings2 } from "lucide-react";
+import { Moon, Sun, Palette, PanelLeftClose, PanelLeftOpen, Menu, LogOut, Globe, Clock, Building2, ChevronDown, Check, User, KeyRound, Info, Settings2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useUiStore } from "@/stores/use-ui-store";
@@ -19,6 +19,8 @@ export function Topbar() {
   const { t } = useTranslation("topbar");
   const theme = useUiStore((s) => s.theme);
   const setTheme = useUiStore((s) => s.setTheme);
+  const colorScheme = useUiStore((s) => s.colorScheme);
+  const setColorScheme = useUiStore((s) => s.setColorScheme);
   const language = useUiStore((s) => s.language);
   const setLanguage = useUiStore((s) => s.setLanguage);
   const timezone = useUiStore((s) => s.timezone);
@@ -108,6 +110,54 @@ export function Topbar() {
         >
           {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </button>
+
+        <Popover.Root>
+          <Popover.Trigger asChild>
+            <button
+              className="cursor-pointer rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              title={t("colorScheme")}
+            >
+              <Palette className="h-4 w-4" />
+            </button>
+          </Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Content
+              align="end"
+              sideOffset={8}
+              className="z-50 w-48 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md"
+            >
+              <div className="px-2 py-1.5 text-sm font-medium">{t("colorScheme")}</div>
+
+              <button
+                onClick={() => setColorScheme("default")}
+                className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent ${
+                  colorScheme === "default" ? "bg-accent" : ""
+                }`}
+              >
+                <div className="flex gap-0.5">
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.55_0.15_38)]" />
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.25_0.02_250)]" />
+                </div>
+                <span>{t("colorSchemes.default")}</span>
+                {colorScheme === "default" && <Check className="ml-auto h-3.5 w-3.5" />}
+              </button>
+
+              <button
+                onClick={() => setColorScheme("neon")}
+                className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent ${
+                  colorScheme === "neon" ? "bg-accent" : ""
+                }`}
+              >
+                <div className="flex gap-0.5">
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.72_0.24_145)]" />
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.68_0.20_175)]" />
+                </div>
+                <span>{t("colorSchemes.neon")}</span>
+                {colorScheme === "neon" && <Check className="ml-auto h-3.5 w-3.5" />}
+              </button>
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
 
         <UserMenu />
       </div>
