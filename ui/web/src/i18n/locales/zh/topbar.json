@@ -29,5 +29,10 @@
     "viewRelease": "查看发行说明 →"
   },
   "systemSettings": "系统设置",
-  "toggleTheme": "切换主题"
+  "toggleTheme": "切换主题",
+  "colorScheme": "配色方案",
+  "colorSchemes": {
+    "default": "默认",
+    "neon": "霓虹"
+  }
 }

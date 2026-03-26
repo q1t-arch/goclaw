@@ -29,5 +29,10 @@
     "en": "English",
     "vi": "Tiếng Việt",
     "zh": "中文"
+  },
+  "colorScheme": "Color scheme",
+  "colorSchemes": {
+    "default": "Default",
+    "neon": "Neon"
   }
 }
