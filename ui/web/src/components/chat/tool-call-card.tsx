@@ -53,7 +53,7 @@ export function ToolCallCard({ entry, compact }: ToolCallCardProps) {
       {expanded && canExpand && (
         <div className="border-t border-muted px-2 py-1.5 space-y-1.5">
           {hasError && (
-            <pre className="text-red-500 whitespace-pre-wrap text-xs">{entry.errorContent}</pre>
+            <pre className="text-destructive whitespace-pre-wrap text-xs">{entry.errorContent}</pre>
           )}
           {entry.arguments && Object.keys(entry.arguments).length > 0 && (
             <div>
@@ -81,16 +81,16 @@ function ToolIcon({ phase, isSkill }: { phase: ToolStreamEntry["phase"]; isSkill
   const cls = "h-3.5 w-3.5";
   if (isSkill) {
     switch (phase) {
-      case "calling": return <Zap className={`${cls} animate-pulse text-amber-500`} />;
-      case "completed": return <Zap className={`${cls} text-amber-500`} />;
-      case "error": return <AlertTriangle className={`${cls} text-red-500`} />;
+      case "calling": return <Zap className={`${cls} animate-pulse text-warning`} />;
+      case "completed": return <Zap className={`${cls} text-warning`} />;
+      case "error": return <AlertTriangle className={`${cls} text-destructive`} />;
       default: return <Zap className={`${cls} text-muted-foreground`} />;
     }
   }
   switch (phase) {
     case "calling": return <Loader2 className={`${cls} animate-spin text-info`} />;
     case "completed": return <Wrench className={`${cls} text-info`} />;
-    case "error": return <AlertTriangle className={`${cls} text-red-500`} />;
+    case "error": return <AlertTriangle className={`${cls} text-destructive`} />;
     default: return <Wrench className={`${cls} text-muted-foreground`} />;
   }
 }
@@ -103,7 +103,7 @@ function PhaseLabel({ phase, isSkill }: { phase: ToolStreamEntry["phase"]; isSki
   const colors: Record<string, string> = {
     calling: "text-info",
     completed: "text-info",
-    error: "text-red-500",
+    error: "text-destructive",
   };
   return <span className={`text-[11px] ${colors[phase] ?? "text-muted-foreground"}`}>{labels[phase] ?? phase}</span>;
 }

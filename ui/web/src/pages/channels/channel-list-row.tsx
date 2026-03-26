@@ -38,7 +38,7 @@ export function ChannelListRow({ instance, status, agentName, onClick, onAuth, o
           <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${
             !instance.enabled ? "bg-muted-foreground/40"
               : isRunning ? "bg-success"
-              : "bg-amber-500"
+              : "bg-warning"
           }`} />
         </div>
         {instance.display_name && (

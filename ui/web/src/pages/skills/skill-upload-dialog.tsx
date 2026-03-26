@@ -277,7 +277,7 @@ function StatusIcon({ status }: { status: FileStatus }) {
     case "valid":
       return <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />;
     case "success":
-      return <CheckCircle2 className="h-4 w-4 shrink-0 text-green-600" />;
+      return <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />;
     case "invalid":
     case "error":
       return <XCircle className="h-4 w-4 shrink-0 text-destructive" />;

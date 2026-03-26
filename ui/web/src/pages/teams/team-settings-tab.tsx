@@ -254,7 +254,7 @@ export function TeamSettingsTab({ teamId, team, onSaved }: TeamSettingsTabProps)
                   ))}
                 </div>
                 {notifyMode === "leader" && (
-                  <p className="text-xs text-amber-600 dark:text-amber-400">
+                  <p className="text-xs text-warning">
                     ⚠️ {t("settings.notifyModeLeaderWarning")}
                   </p>
                 )}
@@ -336,9 +336,9 @@ export function TeamSettingsTab({ teamId, team, onSaved }: TeamSettingsTabProps)
       {/* Blocker Escalation */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium">{t("settings.blockerEscalation")}</h3>
-        <div className="rounded-lg border bg-gradient-to-r from-orange-500/5 to-red-500/5 p-4">
+        <div className="rounded-lg border bg-gradient-to-r from-warning/5 to-destructive/5 p-4">
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-orange-500/10 p-2.5 text-orange-600 dark:text-orange-400">
+            <div className="rounded-lg bg-warning/10 p-2.5 text-warning">
               <ShieldAlert className="h-5 w-5" />
             </div>
             <div className="flex-1 space-y-3">
@@ -359,9 +359,9 @@ export function TeamSettingsTab({ teamId, team, onSaved }: TeamSettingsTabProps)
       {/* Follow-up Reminders */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium">{t("settings.followupReminders")}</h3>
-        <div className="rounded-lg border bg-gradient-to-r from-amber-500/5 to-yellow-500/5 p-4">
+        <div className="rounded-lg border bg-gradient-to-r from-warning/5 to-warning/10 p-4">
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-amber-500/10 p-2.5 text-amber-600 dark:text-amber-400">
+            <div className="rounded-lg bg-warning/10 p-2.5 text-warning">
               <Clock className="h-5 w-5" />
             </div>
             <div className="flex-1 space-y-4">

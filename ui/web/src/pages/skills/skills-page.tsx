@@ -249,7 +249,7 @@ export function SkillsPage() {
                           className={cn(
                             "text-[10px] w-fit",
                             isArchived
-                              ? "border-amber-500 text-amber-600 dark:border-amber-600 dark:text-amber-400"
+                              ? "border-warning text-warning"
                               : "border-success text-success",
                           )}
                         >
@@ -260,7 +260,7 @@ export function SkillsPage() {
                           const shown = deps.slice(0, 3);
                           const rest = deps.length - shown.length;
                           return (
-                            <span className="text-[10px] text-amber-600 dark:text-amber-400 leading-tight">
+                            <span className="text-[10px] text-warning leading-tight">
                               {shown.join(", ")}{rest > 0 && `, +${rest}`}
                             </span>
                           );

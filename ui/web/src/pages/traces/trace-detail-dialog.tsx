@@ -144,7 +144,7 @@ export function TraceDetailDialog({ traceId, onClose, getTrace, onNavigateTrace 
               onClick={() => copy(traceId)}
               className="ml-auto flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
               {t("detail.copyTraceId")}
             </button>
             <button
@@ -196,7 +196,7 @@ export function TraceDetailDialog({ traceId, onClose, getTrace, onNavigateTrace 
                 {((trace.metadata?.total_cache_read_tokens ?? 0) > 0 || (trace.metadata?.total_cache_creation_tokens ?? 0) > 0) && (
                   <span className="ml-1 text-xs">
                     {(trace.metadata?.total_cache_read_tokens ?? 0) > 0 && (
-                      <span className="text-green-400">{formatTokens(trace.metadata!.total_cache_read_tokens!)} {t("span.cached")}</span>
+                      <span className="text-success">{formatTokens(trace.metadata!.total_cache_read_tokens!)} {t("span.cached")}</span>
                     )}
                   </span>
                 )}
@@ -236,8 +236,8 @@ export function TraceDetailDialog({ traceId, onClose, getTrace, onNavigateTrace 
             )}
 
             {trace.error && (
-              <div className="rounded-md border border-red-400/30 bg-red-500/10 p-3">
-                <p className="break-all text-sm text-red-300">{trace.error}</p>
+              <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3">
+                <p className="break-all text-sm text-destructive">{trace.error}</p>
               </div>
             )}
 
@@ -308,12 +308,12 @@ function SpanTreeNode({ node, depth }: { node: SpanNode; depth: number }) {
               <span className="hidden shrink-0 text-xs text-muted-foreground sm:inline">
                 {formatTokens(span.input_tokens)}/{formatTokens(span.output_tokens)}
                 {(span.metadata?.cache_read_tokens ?? 0) > 0 && (
-                  <span className="ml-1 text-green-400">
+                  <span className="ml-1 text-success">
                     ({formatTokens(span.metadata!.cache_read_tokens!)} {t("span.cached")})
                   </span>
                 )}
                 {(span.metadata?.thinking_tokens ?? 0) > 0 && (
-                  <span className="ml-1 text-orange-400">
+                  <span className="ml-1 text-warning">
                     ({formatTokens(span.metadata!.thinking_tokens!)} {t("span.thinking")})
                   </span>
                 )}
@@ -359,17 +359,17 @@ function SpanTreeNode({ node, depth }: { node: SpanNode; depth: number }) {
                   <span className="ml-2 text-muted-foreground">
                     (cache:
                     {(span.metadata?.cache_read_tokens ?? 0) > 0 && (
-                      <span className="ml-1 text-green-400">{formatTokens(span.metadata!.cache_read_tokens!)} {t("span.cacheRead")}</span>
+                      <span className="ml-1 text-success">{formatTokens(span.metadata!.cache_read_tokens!)} {t("span.cacheRead")}</span>
                     )}
                     {(span.metadata?.cache_creation_tokens ?? 0) > 0 && (
-                      <span className="ml-1 text-yellow-400">{formatTokens(span.metadata!.cache_creation_tokens!)} {t("span.cacheWrite")}</span>
+                      <span className="ml-1 text-warning">{formatTokens(span.metadata!.cache_creation_tokens!)} {t("span.cacheWrite")}</span>
                     )}
                     )
                   </span>
                 )}
                 {(span.metadata?.thinking_tokens ?? 0) > 0 && (
                   <span className="ml-2 text-muted-foreground">
-                    (<span className="text-orange-400">{formatTokens(span.metadata!.thinking_tokens!)} {t("span.thinking")}</span>)
+                    (<span className="text-warning">{formatTokens(span.metadata!.thinking_tokens!)} {t("span.thinking")}</span>)
                   </span>
                 )}
               </div>
@@ -381,7 +381,7 @@ function SpanTreeNode({ node, depth }: { node: SpanNode; depth: number }) {
               <PreviewBlock label={t("span.output")} content={span.output_preview} />
             )}
             {span.error && (
-              <p className="break-all text-xs text-red-300">{span.error}</p>
+              <p className="break-all text-xs text-destructive">{span.error}</p>
             )}
           </div>
         )}
@@ -426,7 +426,7 @@ function PreviewBlock({ label, content }: { label: string; content: string }) {
         onClick={() => copy(content)}
         className="absolute right-2 top-2 flex items-center gap-1 rounded px-1.5 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       >
-        {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+        {copied ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
         {t("detail.copy")}
       </button>
       {highlightedHtml ? (

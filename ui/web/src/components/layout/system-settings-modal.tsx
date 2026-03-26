@@ -429,7 +429,7 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
         {/* Footer */}
         <div className="flex flex-col gap-3 border-t pt-4 shrink-0">
           {embChanged && !embVerified && (
-            <p className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+            <p className="flex items-center gap-1.5 text-xs text-warning">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
               {t("embedding.verifyRequired")}
             </p>

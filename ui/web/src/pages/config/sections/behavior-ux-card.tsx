@@ -41,13 +41,13 @@ export function BehaviorUxCard({ value, onChange }: Props) {
     },
     {
       icon: Brain,
-      iconClass: "text-orange-500",
+      iconClass: "text-warning",
       label: t("agents.intentClassify"),
       hint: t("behavior.intentClassifyHint"),
       checked: value.intent_classify !== false,
       onCheckedChange: (v) => onChange({ ...value, intent_classify: v }),
       infoWhenOn: t("behavior.intentClassifyInfo"),
-      infoClass: "border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300",
+      infoClass: "border-warning/30 bg-warning/5 text-warning",
     },
   ];
 

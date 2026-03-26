@@ -46,7 +46,7 @@ export function BehaviorSecurityCard({ value, onChange }: Props) {
         <div className="border-b py-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
-              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
               <div className="space-y-1">
                 <Label className="text-sm font-medium">{t("gateway.injectionAction")}</Label>
                 <p className="text-xs text-muted-foreground">{t("behavior.injectionActionHint")}</p>
@@ -67,14 +67,14 @@ export function BehaviorSecurityCard({ value, onChange }: Props) {
           </div>
 
           {action === "block" && (
-            <div className="mt-3 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+            <div className="mt-3 flex items-start gap-2 rounded-md border border-warning/30 bg-warning/5 px-3 py-2 text-xs text-warning">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <span>{t("behavior.injectionBlockInfo")}</span>
             </div>
           )}
 
           {action === "off" && (
-            <div className="mt-3 flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
+            <div className="mt-3 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <span>{t("behavior.injectionOffInfo")}</span>
             </div>
@@ -106,7 +106,7 @@ export function BehaviorSecurityCard({ value, onChange }: Props) {
           )}
 
           {!scrub && (
-            <div className="mt-3 flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
+            <div className="mt-3 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <span>{t("behavior.scrubCredentialsOffInfo")}</span>
             </div>

@@ -50,7 +50,7 @@ export function AgentHeader({ agent, heartbeat, onBack, onDelete, onAdvanced, on
           <div className="flex items-center gap-1.5 flex-wrap">
             <h2 className="truncate text-base font-semibold">{title}</h2>
             {agent.is_default && (
-              <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" />
+              <Star className="h-3.5 w-3.5 shrink-0 fill-warning text-warning" />
             )}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -85,7 +85,7 @@ export function AgentHeader({ agent, heartbeat, onBack, onDelete, onAdvanced, on
                 <TooltipTrigger asChild>
                   <Badge
                     variant={selfEvolve ? "default" : "outline"}
-                    className={`text-[10px] ${selfEvolve ? "bg-orange-100 text-orange-700 hover:bg-orange-100 dark:bg-orange-900/30 dark:text-orange-300" : "text-muted-foreground"}`}
+                    className={`text-[10px] ${selfEvolve ? "bg-warning/10 text-warning hover:bg-warning/10" : "text-muted-foreground"}`}
                   >
                     <Sparkles className="h-2.5 w-2.5 sm:mr-0.5" />
                     <span className="hidden sm:inline">{selfEvolve ? t("detail.evolving") : t("detail.static")}</span>

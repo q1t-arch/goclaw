@@ -139,7 +139,7 @@ export function AgentPermissionsTab({ agentId }: AgentPermissionsTabProps) {
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="text-sm font-medium flex items-center gap-2">
-            <Shield className="h-4 w-4 text-amber-500" />
+            <Shield className="h-4 w-4 text-warning" />
             {t("permissions.title")}
           </h3>
           <p className="text-xs text-muted-foreground mt-1">{t("permissions.description")}</p>

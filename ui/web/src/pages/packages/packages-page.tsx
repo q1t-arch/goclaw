@@ -41,23 +41,23 @@ export function PackagesPage() {
               key={rt.name}
               className={`rounded-lg border p-3 ${
                 rt.available
-                  ? "border-green-200 bg-green-50 dark:border-green-900/50 dark:bg-green-950/20"
-                  : "border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-950/20"
+                  ? "border-success/30 bg-success/5"
+                  : "border-destructive/30 bg-destructive/5"
               }`}
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">{rt.name}</span>
                 {rt.available ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                 ) : (
-                  <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                  <XCircle className="h-4 w-4 text-destructive" />
                 )}
               </div>
               {rt.version && (
                 <p className="text-xs text-muted-foreground mt-1 font-mono truncate">{rt.version}</p>
               )}
               {!rt.available && (
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">{t("runtimes.missing")}</p>
+                <p className="text-xs text-destructive mt-1">{t("runtimes.missing")}</p>
               )}
             </div>
           ))}
@@ -200,7 +200,7 @@ function PackageSection({ title, placeholder, packages, loading, onInstall, onUn
                     <td className="py-2 px-3 text-muted-foreground font-mono text-sm">{pkg.version}</td>
                     <td className="py-2 px-3 text-right">
                       {status === "success" ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 inline" />
+                        <CheckCircle2 className="h-4 w-4 text-success inline" />
                       ) : (
                         <Button
                           variant="ghost"

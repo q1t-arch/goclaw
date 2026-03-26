@@ -59,7 +59,7 @@ function highlightLine(line: string, lang: Tab): React.ReactNode | string {
     }
     // The string itself
     parts.push(
-      <span key={key++} className="text-amber-600 dark:text-amber-400">{match[0]}</span>,
+      <span key={key++} className="text-warning">{match[0]}</span>,
     );
     lastIndex = match.index + match[0].length;
   }

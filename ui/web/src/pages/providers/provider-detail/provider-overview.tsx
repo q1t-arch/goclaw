@@ -233,7 +233,7 @@ export function ProviderOverview({ provider, onUpdate }: ProviderOverviewProps) 
                   <span className={`flex items-center gap-1 text-xs ${
                     embResult.valid
                       ? embResult.dimension_mismatch
-                        ? "text-amber-600 dark:text-amber-400"
+                        ? "text-warning"
                         : "text-success"
                       : "text-destructive"
                   }`}>

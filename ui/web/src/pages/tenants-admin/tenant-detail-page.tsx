@@ -38,8 +38,8 @@ const ROLE_KEYS: Record<string, string> = {
 };
 
 const ROLE_COLORS: Record<string, string> = {
-  owner: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-  admin: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  owner: "bg-warning/10 text-warning",
+  admin: "bg-warning/15 text-warning",
   operator: "bg-info/10 text-info",
   member: "bg-muted text-muted-foreground",
   viewer: "bg-muted text-muted-foreground",

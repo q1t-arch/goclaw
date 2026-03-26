@@ -13,7 +13,7 @@ export function ConnectionStatus({ collapsed }: { collapsed?: boolean }) {
       <span
         className={cn(
           "h-2 w-2 shrink-0 rounded-full",
-          connected ? "bg-green-500" : "bg-red-500",
+          connected ? "bg-success" : "bg-destructive",
         )}
       />
       {!collapsed && (

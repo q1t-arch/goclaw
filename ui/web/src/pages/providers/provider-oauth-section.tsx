@@ -153,7 +153,7 @@ export function OAuthSection({ onSuccess, authenticatedActionLabel }: OAuthSecti
   if (justAuthenticated) {
     return (
       <div className="space-y-3 py-2">
-        <div className="flex items-center gap-2 rounded-md border border-green-500/30 bg-green-500/5 px-4 py-3 text-sm text-green-700 dark:text-green-400">
+        <div className="flex items-center gap-2 rounded-md border border-success/30 bg-success/5 px-4 py-3 text-sm text-success">
           <CheckCircle className="h-5 w-5 shrink-0" />
           <div>
             <p className="font-medium">{t("oauth.authSuccessful")}</p>
@@ -171,7 +171,7 @@ export function OAuthSection({ onSuccess, authenticatedActionLabel }: OAuthSecti
   if (status?.authenticated) {
     return (
       <div className="space-y-3">
-        <div className="flex items-center gap-2 rounded-md border border-green-500/30 bg-green-500/5 px-3 py-2 text-sm text-green-700 dark:text-green-400">
+        <div className="flex items-center gap-2 rounded-md border border-success/30 bg-success/5 px-3 py-2 text-sm text-success">
           <CheckCircle className="h-4 w-4 shrink-0" />
           <span>
             {t("oauth.authenticated")} <code className="rounded bg-muted px-1 font-mono text-xs">openai-codex</code> {t("oauth.active")}
@@ -204,8 +204,8 @@ export function OAuthSection({ onSuccess, authenticatedActionLabel }: OAuthSecti
             <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
             <span>{t("oauth.waiting")}</span>
           </div>
-          <div className="rounded-md border border-amber-500/30 bg-amber-500/5 p-3 space-y-2">
-            <p className="text-xs text-amber-700 dark:text-amber-400">
+          <div className="rounded-md border border-warning/30 bg-warning/5 p-3 space-y-2">
+            <p className="text-xs text-warning">
               <strong>{t("oauth.remoteVps")}</strong>{" "}{t("oauth.remoteVpsHint")}{" "}
               <code className="text-xs">localhost:1455</code>{" "}{t("oauth.remoteVpsError")}
             </p>

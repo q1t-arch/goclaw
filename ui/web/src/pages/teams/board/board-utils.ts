@@ -14,12 +14,12 @@ export type KanbanStatus = (typeof KANBAN_STATUSES)[number];
 
 /** Status display colors for column headers */
 export const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-slate-400",
+  pending: "bg-muted-foreground",
   in_progress: "bg-info",
-  completed: "bg-green-500",
-  blocked: "bg-amber-500",
-  failed: "bg-red-500",
-  cancelled: "bg-gray-400",
+  completed: "bg-success",
+  blocked: "bg-warning",
+  failed: "bg-destructive",
+  cancelled: "bg-muted-foreground",
 };
 
 /** Group tasks by a field for kanban columns */

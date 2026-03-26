@@ -38,7 +38,7 @@ export function AgentListRow({ agent, ownerName, onClick, onResummon, onDelete }
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <span className="truncate text-sm font-semibold">{displayName}</span>
-          {agent.is_default && <Star className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400" />}
+          {agent.is_default && <Star className="h-3 w-3 shrink-0 fill-warning text-warning" />}
         </div>
         {agent.display_name && !UUID_RE.test(agent.agent_key) && (
           <div className="truncate text-xs text-muted-foreground">{agent.agent_key}</div>
@@ -48,7 +48,7 @@ export function AgentListRow({ agent, ownerName, onClick, onResummon, onDelete }
       {/* Status */}
       <div className="hidden shrink-0 sm:block">
         {agent.status === "summoning" ? (
-          <Badge variant="outline" className="animate-pulse border-orange-400 text-orange-600 dark:text-orange-400">
+          <Badge variant="outline" className="animate-pulse border-warning text-warning">
             {t("card.summoning")}
           </Badge>
         ) : agent.status === "summon_failed" ? (
@@ -69,7 +69,7 @@ export function AgentListRow({ agent, ownerName, onClick, onResummon, onDelete }
         {selfEvolve && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Badge className="bg-orange-100 text-[11px] text-orange-700 hover:bg-orange-100 dark:bg-orange-900/30 dark:text-orange-300">
+              <Badge className="bg-warning/10 text-[11px] text-warning hover:bg-warning/10">
                 <Sparkles className="mr-0.5 h-3 w-3" />
                 {t("card.evolving")}
               </Badge>

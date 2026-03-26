@@ -73,7 +73,7 @@ export function ChannelsStatusView({ channels, loading, spinning, refresh }: Cha
                 </div>
                 <div className="mt-3 flex items-center gap-2 text-sm">
                   <span
-                    className={`h-2 w-2 rounded-full ${status.running ? "bg-green-500" : "bg-muted-foreground"}`}
+                    className={`h-2 w-2 rounded-full ${status.running ? "bg-success" : "bg-muted-foreground"}`}
                   />
                   <span className="text-muted-foreground">
                     {status.running ? t("status.running") : t("status.stopped")}

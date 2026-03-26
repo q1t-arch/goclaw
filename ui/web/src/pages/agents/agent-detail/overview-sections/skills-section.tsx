@@ -50,7 +50,7 @@ export function SkillsSection({ agentId }: SkillsSectionProps) {
     <section className="space-y-3 rounded-lg border p-3 sm:p-4">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-amber-500" />
+          <Zap className="h-4 w-4 text-warning" />
           <h3 className="text-sm font-medium">{t("detail.skills")}</h3>
           {!loading && (
             <span className="text-xs text-muted-foreground">

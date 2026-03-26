@@ -314,7 +314,7 @@ export function ChannelInstanceFormDialog({
               {instance && wizard?.steps.includes("auth") && (
                 <div className="rounded-md border border-info/25 bg-info/5 p-3">
                   <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${instance.has_credentials ? "bg-green-500" : "bg-amber-500"}`} />
+                    <span className={`h-2 w-2 rounded-full ${instance.has_credentials ? "bg-success" : "bg-warning"}`} />
                     <span className="text-sm">
                       {instance.has_credentials
                         ? t("form.authStatus.authenticated")

@@ -20,9 +20,9 @@ import { useMinLoading } from "@/hooks/use-min-loading";
 import { useDeferredLoading } from "@/hooks/use-deferred-loading";
 
 const ACTION_COLORS: Record<string, string> = {
-  "agent.created": "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  "agent.created": "bg-success/10 text-success",
   "agent.updated": "bg-info/10 text-info",
-  "agent.deleted": "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  "agent.deleted": "bg-destructive/10 text-destructive",
 };
 
 export function ActivityPage() {
