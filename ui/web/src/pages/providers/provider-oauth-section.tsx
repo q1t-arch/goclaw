@@ -200,7 +200,7 @@ export function OAuthSection({ onSuccess, authenticatedActionLabel }: OAuthSecti
       <p className="text-sm text-muted-foreground">{t("oauth.signInDesc")}</p>
       {waitingCallback ? (
         <div className="space-y-3">
-          <div className="flex items-center gap-2 rounded-md border border-blue-500/30 bg-blue-500/5 px-3 py-2 text-sm text-blue-700 dark:text-blue-400">
+          <div className="flex items-center gap-2 rounded-md border border-info/30 bg-info/5 px-3 py-2 text-sm text-info">
             <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
             <span>{t("oauth.waiting")}</span>
           </div>

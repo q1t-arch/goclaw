@@ -21,7 +21,7 @@ import { useDeferredLoading } from "@/hooks/use-deferred-loading";
 
 const ACTION_COLORS: Record<string, string> = {
   "agent.created": "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-  "agent.updated": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+  "agent.updated": "bg-info/10 text-info",
   "agent.deleted": "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
 };
 

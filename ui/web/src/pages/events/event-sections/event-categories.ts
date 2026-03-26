@@ -45,8 +45,8 @@ const teamCrud: EventCategoryConfig = {
 const agentLink: EventCategoryConfig = {
   label: "Link",
   icon: Link,
-  borderColor: "border-l-cyan-500",
-  iconColor: "text-cyan-500",
+  borderColor: "border-l-info",
+  iconColor: "text-info",
 };
 
 export function getCategoryConfig(event: string): EventCategoryConfig {

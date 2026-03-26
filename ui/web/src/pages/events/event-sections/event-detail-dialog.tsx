@@ -76,7 +76,7 @@ function JsonHighlight({ json }: { json: string }) {
         // String key (followed by colon in next capture group)
         if (part.startsWith('"') && parts[i + 1] === ":") {
           return (
-            <span key={i} className="text-sky-600 dark:text-sky-400">
+            <span key={i} className="text-info">
               {part}
             </span>
           );
@@ -92,7 +92,7 @@ function JsonHighlight({ json }: { json: string }) {
         // String value
         if (part.startsWith('"')) {
           return (
-            <span key={i} className="text-emerald-600 dark:text-emerald-400">
+            <span key={i} className="text-success">
               {part}
             </span>
           );

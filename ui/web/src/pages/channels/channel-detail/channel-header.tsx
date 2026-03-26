@@ -42,7 +42,7 @@ export function ChannelHeader({ instance, status, agentName, onBack, onAdvanced,
                 <span
                   className={cn(
                     "inline-block h-2.5 w-2.5 shrink-0 rounded-full",
-                    instance.enabled ? "bg-emerald-500" : "bg-muted-foreground/50",
+                    instance.enabled ? "bg-success" : "bg-muted-foreground/50",
                   )}
                 />
               </TooltipTrigger>

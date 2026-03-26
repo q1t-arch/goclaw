@@ -85,7 +85,7 @@ export function BehaviorSecurityCard({ value, onChange }: Props) {
         <div className="py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <KeyRound className={cn("h-4 w-4 shrink-0", scrub ? "text-emerald-500" : "text-red-500")} />
+              <KeyRound className={cn("h-4 w-4 shrink-0", scrub ? "text-success" : "text-destructive")} />
               <div className="space-y-1">
                 <Label className="text-sm font-medium">{t("tools.scrubCredentials")}</Label>
                 <p className="text-xs text-muted-foreground">{t("behavior.scrubCredentialsHint")}</p>
@@ -99,7 +99,7 @@ export function BehaviorSecurityCard({ value, onChange }: Props) {
           </div>
 
           {scrub && (
-            <div className="mt-3 flex items-start gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300">
+            <div className="mt-3 flex items-start gap-2 rounded-md border border-success/25 bg-success/10 px-3 py-2 text-xs text-success">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <span>{t("behavior.scrubCredentialsInfo")}</span>
             </div>

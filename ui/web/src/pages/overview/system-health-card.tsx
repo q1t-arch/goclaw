@@ -21,7 +21,7 @@ function StatusDot({ ok }: { ok: boolean | undefined }) {
   if (ok === undefined)
     return <Minus className="h-3.5 w-3.5 text-muted-foreground/40" />;
   return ok ? (
-    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+    <CheckCircle2 className="h-3.5 w-3.5 text-success" />
   ) : (
     <XCircle className="h-3.5 w-3.5 text-red-500" />
   );
@@ -84,7 +84,7 @@ export function SystemHealthCard({
               <Tag className="h-3 w-3" />
               <span className="font-medium">{cleanVersion(health.version)}</span>
               {health.updateAvailable === false && (
-                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                <CheckCircle2 className="h-3 w-3 text-success" />
               )}
               {health.updateAvailable && health.updateUrl && (
                 <a
@@ -158,7 +158,7 @@ export function SystemHealthCard({
                   className="inline-flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1 text-xs"
                 >
                   <span
-                    className={`h-1.5 w-1.5 rounded-full ${rt.available ? "bg-emerald-500" : "bg-red-400"}`}
+                    className={`h-1.5 w-1.5 rounded-full ${rt.available ? "bg-success" : "bg-destructive"}`}
                   />
                   {rt.name}
                   {rt.version && (
@@ -182,7 +182,7 @@ export function SystemHealthCard({
                   className="inline-flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1 text-xs"
                 >
                   <span
-                    className={`h-1.5 w-1.5 rounded-full ${ch.running ? "bg-emerald-500" : "bg-red-400"}`}
+                    className={`h-1.5 w-1.5 rounded-full ${ch.running ? "bg-success" : "bg-destructive"}`}
                   />
                   {name}
                 </span>

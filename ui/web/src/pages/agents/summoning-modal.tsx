@@ -148,7 +148,7 @@ export function SummoningModal({
             <motion.div
               className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full text-3xl ${
                 status === "completed"
-                  ? "bg-emerald-100 dark:bg-emerald-900/30"
+                  ? "bg-success/10"
                   : status === "failed"
                     ? "bg-red-100 dark:bg-red-900/30"
                     : "bg-orange-100 dark:bg-orange-900/30"
@@ -173,7 +173,7 @@ export function SummoningModal({
           {/* Agent name */}
           <p className="text-sm text-foreground">
             {status === "completed" ? (
-              <span className="font-medium text-emerald-600 dark:text-emerald-400">
+              <span className="font-medium text-success">
                 {t("summoning.agentReady", { name: agentName })}
               </span>
             ) : status === "failed" ? (

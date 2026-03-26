@@ -233,7 +233,7 @@ export function ContactsPage() {
                         {c.display_name || <span className="text-muted-foreground">—</span>}
                         {c.merged_id && (
                           <span title={t("columns.merged")}>
-                            <Link2 className="h-3 w-3 text-blue-500 shrink-0" />
+                            <Link2 className="h-3 w-3 text-info shrink-0" />
                           </span>
                         )}
                       </span>
@@ -295,15 +295,15 @@ function PermissionsNote() {
   const p = "permissionsNote";
 
   return (
-    <div className="mt-4 rounded-md border border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/30">
+    <div className="mt-4 rounded-md border border-info/25 bg-info/5">
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm"
       >
-        <Info className="h-4 w-4 text-blue-500 shrink-0" />
-        <span className="font-medium text-blue-700 dark:text-blue-400">{t(`${p}.title`)}</span>
-        <ChevronDown className={`ml-auto h-4 w-4 text-blue-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        <Info className="h-4 w-4 text-info shrink-0" />
+        <span className="font-medium text-info">{t(`${p}.title`)}</span>
+        <ChevronDown className={`ml-auto h-4 w-4 text-info/60 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
         <ul className="px-3 pb-3 space-y-1 text-xs text-muted-foreground">

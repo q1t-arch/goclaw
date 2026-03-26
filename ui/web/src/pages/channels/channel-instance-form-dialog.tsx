@@ -312,7 +312,7 @@ export function ChannelInstanceFormDialog({
 
               {/* Auth status indicator (edit mode, channels with auth wizard step) */}
               {instance && wizard?.steps.includes("auth") && (
-                <div className="rounded-md border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950 p-3">
+                <div className="rounded-md border border-info/25 bg-info/5 p-3">
                   <div className="flex items-center gap-2">
                     <span className={`h-2 w-2 rounded-full ${instance.has_credentials ? "bg-green-500" : "bg-amber-500"}`} />
                     <span className="text-sm">
@@ -329,7 +329,7 @@ export function ChannelInstanceFormDialog({
 
               {/* Wizard info banner (create mode) */}
               {hasWizard && wizard?.formBanner && (
-                <div className="rounded-md border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950 p-3">
+                <div className="rounded-md border border-info/25 bg-info/5 p-3">
                   <p className="text-sm text-muted-foreground">{t(wizard.formBanner)}</p>
                 </div>
               )}

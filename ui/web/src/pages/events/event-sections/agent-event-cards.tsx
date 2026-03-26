@@ -166,7 +166,7 @@ function PillId({ label, id }: { label: string; id: string }) {
 
 function RunKindBadge({ kind }: { kind: string }) {
   const colors: Record<string, string> = {
-    delegation: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+    delegation: "bg-info/10 text-info",
     announce: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
   };
   return (

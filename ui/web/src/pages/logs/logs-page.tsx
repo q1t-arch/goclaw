@@ -9,7 +9,7 @@ import { useLogs, type LogEntry, type LogLevel } from "./hooks/use-logs";
 const levelColors: Record<string, string> = {
   error: "text-red-500",
   warn: "text-yellow-500",
-  info: "text-blue-500",
+  info: "text-info",
   debug: "text-zinc-500",
 };
 
@@ -181,7 +181,7 @@ function LogLine({ entry }: { entry: LogEntry }) {
         [{entry.level?.toUpperCase() || "LOG"}]
       </span>{" "}
       {entry.source && (
-        <span className="text-cyan-600">[{entry.source}] </span>
+        <span className="text-info">[{entry.source}] </span>
       )}
       <span>{entry.message}</span>
       {hasAttrs && (

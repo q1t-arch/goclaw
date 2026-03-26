@@ -15,7 +15,7 @@ export type KanbanStatus = (typeof KANBAN_STATUSES)[number];
 /** Status display colors for column headers */
 export const STATUS_COLORS: Record<string, string> = {
   pending: "bg-slate-400",
-  in_progress: "bg-blue-500",
+  in_progress: "bg-info",
   completed: "bg-green-500",
   blocked: "bg-amber-500",
   failed: "bg-red-500",
