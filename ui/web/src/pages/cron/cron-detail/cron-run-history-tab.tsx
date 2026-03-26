@@ -37,7 +37,7 @@ function RunEntry({ entry }: { entry: CronRunLogEntry }) {
         disabled={!hasDetails}
       >
         {/* Status dot */}
-        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${isSuccess ? "bg-emerald-500" : "bg-destructive"}`} />
+        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${isSuccess ? "bg-success" : "bg-destructive"}`} />
 
         {/* Timestamp + duration */}
         <div className="min-w-0 flex-1">

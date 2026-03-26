@@ -225,7 +225,7 @@ export function SkillsPage() {
                           {skill.name}
                         </button>
                         {skill.is_system && (
-                          <Badge variant="outline" className="border-blue-500 text-blue-600 text-[10px]">
+                          <Badge variant="outline" className="border-info text-info text-[10px]">
                             {t("system")}
                           </Badge>
                         )}
@@ -250,7 +250,7 @@ export function SkillsPage() {
                             "text-[10px] w-fit",
                             isArchived
                               ? "border-amber-500 text-amber-600 dark:border-amber-600 dark:text-amber-400"
-                              : "border-emerald-500 text-emerald-600 dark:border-emerald-600 dark:text-emerald-400",
+                              : "border-success text-success",
                           )}
                         >
                           {isArchived ? t("deps.statusArchived") : t("deps.statusActive")}

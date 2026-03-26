@@ -38,7 +38,7 @@ function getPhaseConfig(activity: RunActivity) {
     case "tool_exec":
       return {
         icon: Wrench,
-        color: "text-blue-500",
+        color: "text-info",
         label: activity.tool ? `Running ${activity.tool}...` : "Running tools...",
       };
     case "streaming":

@@ -58,7 +58,7 @@ export function AgentHeader({ agent, heartbeat, onBack, onDelete, onAdvanced, on
                   className={cn(
                     "inline-block h-2.5 w-2.5 shrink-0 rounded-full",
                     agent.status === "active"
-                      ? "bg-emerald-500"
+                      ? "bg-success"
                       : agent.status === "summon_failed"
                         ? "bg-destructive"
                         : "bg-muted-foreground/50",

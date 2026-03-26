@@ -81,7 +81,7 @@ export function SkillsSection({ agentId }: SkillsSectionProps) {
                     {skill.visibility}
                   </Badge>
                   {skill.is_system && (
-                    <Badge variant="outline" className="border-blue-500 text-blue-600 text-[10px] shrink-0">
+                    <Badge variant="outline" className="border-info text-info text-[10px] shrink-0">
                       {t("skills.system")}
                     </Badge>
                   )}

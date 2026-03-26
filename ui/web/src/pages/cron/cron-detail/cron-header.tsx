@@ -49,7 +49,7 @@ export function CronHeader({ job, isRunning, onBack, onRun, onAdvanced, onToggle
                 <span
                   className={cn(
                     "inline-block h-2.5 w-2.5 shrink-0 rounded-full",
-                    job.enabled ? "bg-emerald-500" : "bg-muted-foreground/50",
+                    job.enabled ? "bg-success" : "bg-muted-foreground/50",
                   )}
                 />
               </TooltipTrigger>

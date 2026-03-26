@@ -9,7 +9,7 @@ import type { TeamTaskData } from "@/types/team";
 
 const PRIORITY_LABELS: Record<number, { label: string; color: string }> = {
   0: { label: "P-0", color: "text-slate-400" },
-  1: { label: "P-1", color: "text-blue-500" },
+  1: { label: "P-1", color: "text-info" },
   2: { label: "P-2", color: "text-amber-500" },
   3: { label: "P-3", color: "text-red-500" },
 };

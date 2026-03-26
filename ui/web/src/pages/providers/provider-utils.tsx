@@ -25,14 +25,14 @@ export function ProviderApiKeyBadge({ provider }: { provider: ProviderData }) {
   const { t } = useTranslation("providers");
   if (provider.provider_type === "chatgpt_oauth") {
     return (
-      <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+      <span className="flex items-center gap-1 text-[11px] text-success">
         <Link2 className="h-3 w-3" />{t("card.oauthLinked")}
       </span>
     );
   }
   if (provider.provider_type === "claude_cli") {
     return (
-      <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+      <span className="flex items-center gap-1 text-[11px] text-success">
         <ShieldCheck className="h-3 w-3" />{t("card.authenticated")}
       </span>
     );

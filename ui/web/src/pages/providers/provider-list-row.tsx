@@ -33,7 +33,7 @@ export function ProviderListRow({ provider, onClick, onDelete }: ProviderListRow
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="truncate text-sm font-semibold">{displayName}</span>
-          <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${provider.enabled ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
+          <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${provider.enabled ? "bg-success" : "bg-muted-foreground/40"}`} />
         </div>
         {provider.display_name && (
           <div className="truncate text-xs text-muted-foreground">{provider.name}</div>

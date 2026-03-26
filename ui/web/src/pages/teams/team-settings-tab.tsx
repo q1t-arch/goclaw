@@ -173,9 +173,9 @@ export function TeamSettingsTab({ teamId, team, onSaved }: TeamSettingsTabProps)
       {/* Notifications */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium">{t("settings.notifications")}</h3>
-        <div className="rounded-lg border bg-gradient-to-r from-blue-500/5 to-orange-500/5 p-4 space-y-3">
+        <div className="rounded-lg border bg-gradient-to-r from-info/5 to-warning/5 p-4 space-y-3">
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-blue-500/10 p-2.5 text-blue-600 dark:text-blue-400">
+            <div className="rounded-lg bg-info/10 p-2.5 text-info">
               <Bell className="h-5 w-5" />
             </div>
             <div className="flex-1 space-y-3">
@@ -267,9 +267,9 @@ export function TeamSettingsTab({ teamId, team, onSaved }: TeamSettingsTabProps)
       {/* Workspace Scope */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium">{t("settings.workspace")}</h3>
-        <div className="rounded-lg border bg-gradient-to-r from-emerald-500/5 to-teal-500/5 p-4">
+        <div className="rounded-lg border bg-gradient-to-r from-success/5 to-success/10 p-4">
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-emerald-500/10 p-2.5 text-emerald-600 dark:text-emerald-400">
+            <div className="rounded-lg bg-success/10 p-2.5 text-success">
               <FolderSync className="h-5 w-5" />
             </div>
             <div className="flex-1 space-y-3">

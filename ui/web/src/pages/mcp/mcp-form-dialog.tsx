@@ -297,7 +297,7 @@ export function MCPFormDialog({ open, onOpenChange, server, onSubmit, onTest }: 
               {testing ? <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> {t("form.testing")}</> : t("form.testConnection")}
             </Button>
             {testResult && (
-              <span className={`flex items-center gap-1 text-xs ${testResult.success ? "text-emerald-600 dark:text-emerald-400" : "text-destructive"}`}>
+              <span className={`flex items-center gap-1 text-xs ${testResult.success ? "text-success" : "text-destructive"}`}>
                 {testResult.success ? (
                   <><CheckCircle2 className="h-3.5 w-3.5" /> {t("form.toolsFound", { count: testResult.tool_count })}</>
                 ) : (

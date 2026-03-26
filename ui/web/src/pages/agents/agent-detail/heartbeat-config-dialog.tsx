@@ -217,7 +217,7 @@ export function HeartbeatConfigDialog({
           {/* ── Delivery — WHERE it sends ── */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Send className="h-3.5 w-3.5 text-blue-500" />
+              <Send className="h-3.5 w-3.5 text-info" />
               <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {t("heartbeat.sectionDelivery")}
               </h4>
@@ -402,7 +402,7 @@ export function HeartbeatConfigDialog({
           {/* ── Checklist — WHAT the agent does ── */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <FileText className="h-3.5 w-3.5 text-emerald-500" />
+              <FileText className="h-3.5 w-3.5 text-success" />
               <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {t("heartbeat.checklist")}
               </h4>

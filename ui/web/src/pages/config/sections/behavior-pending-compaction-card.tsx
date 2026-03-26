@@ -88,7 +88,7 @@ export function BehaviorPendingCompactionCard({ value, onChange }: Props) {
         <div className="border-b py-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
-              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-info" />
               <div className="space-y-1">
                 <Label className="text-sm font-medium">
                   {t("behavior.pendingCompactionKeepRecent")}

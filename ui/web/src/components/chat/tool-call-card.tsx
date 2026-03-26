@@ -88,8 +88,8 @@ function ToolIcon({ phase, isSkill }: { phase: ToolStreamEntry["phase"]; isSkill
     }
   }
   switch (phase) {
-    case "calling": return <Loader2 className={`${cls} animate-spin text-blue-500`} />;
-    case "completed": return <Wrench className={`${cls} text-blue-500`} />;
+    case "calling": return <Loader2 className={`${cls} animate-spin text-info`} />;
+    case "completed": return <Wrench className={`${cls} text-info`} />;
     case "error": return <AlertTriangle className={`${cls} text-red-500`} />;
     default: return <Wrench className={`${cls} text-muted-foreground`} />;
   }
@@ -101,8 +101,8 @@ function PhaseLabel({ phase, isSkill }: { phase: ToolStreamEntry["phase"]; isSki
     ? { calling: t("skillActivating"), completed: t("skillActivated"), error: t("toolFailed") }
     : { calling: t("toolRunning"), completed: t("toolDone"), error: t("toolFailed") };
   const colors: Record<string, string> = {
-    calling: "text-blue-500",
-    completed: "text-blue-500",
+    calling: "text-info",
+    completed: "text-info",
     error: "text-red-500",
   };
   return <span className={`text-[11px] ${colors[phase] ?? "text-muted-foreground"}`}>{labels[phase] ?? phase}</span>;
