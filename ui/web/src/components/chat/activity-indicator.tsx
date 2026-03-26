@@ -52,7 +52,7 @@ function getPhaseConfig(activity: RunActivity) {
         label: `Retrying (${activity.retryAttempt ?? 0}/${activity.retryMax ?? 0})...`,
       };
     case "leader_processing":
-      return { icon: Users, color: "text-emerald-500", label: "Processing team results..." };
+      return { icon: Users, color: "text-success", label: "Processing team results..." };
     default:
       return { icon: Brain, color: "text-muted-foreground", label: "Working..." };
   }

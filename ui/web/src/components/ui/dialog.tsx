@@ -61,7 +61,7 @@ function DialogContent({
   const { t } = useTranslation("common")
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay style={overlayTransparent ? { background: "rgba(0,0,0,0.15)" } : undefined} />
+      <DialogOverlay style={overlayTransparent ? { background: "color-mix(in oklch, var(--overlay) 30%, transparent)" } : undefined} />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(

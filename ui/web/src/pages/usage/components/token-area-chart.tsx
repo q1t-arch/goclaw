@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { formatTokens, formatBucketTz } from "@/lib/format";
 import { useUiStore } from "@/stores/use-ui-store";
+import { useChartColors } from "@/hooks/use-chart-colors";
 import { ChartWrapper } from "./chart-wrapper";
 import type { SnapshotTimeSeries } from "../hooks/use-usage-analytics";
 
@@ -18,6 +19,7 @@ interface TokenAreaChartProps {
 export function TokenAreaChart({ data, loading, granularity }: TokenAreaChartProps) {
   const { t } = useTranslation("usage");
   const timezone = useUiStore((s) => s.timezone);
+  const colors = useChartColors();
 
   const isEmpty = !loading && data.length === 0;
 
@@ -41,12 +43,12 @@ export function TokenAreaChart({ data, loading, granularity }: TokenAreaChartPro
         <AreaChart key={chartData[0]?.bucket_time ?? chartData.length} data={chartData} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="inputGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#E85D24" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#E85D24" stopOpacity={0} />
+              <stop offset="5%" stopColor={colors.chart1} stopOpacity={0.3} />
+              <stop offset="95%" stopColor={colors.chart1} stopOpacity={0} />
             </linearGradient>
             <linearGradient id="outputGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+              <stop offset="5%" stopColor={colors.chart4} stopOpacity={0.3} />
+              <stop offset="95%" stopColor={colors.chart4} stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -61,7 +63,7 @@ export function TokenAreaChart({ data, loading, granularity }: TokenAreaChartPro
             type="monotone"
             dataKey="input_tokens"
             name={t("analytics.tokenChart.input")}
-            stroke="#E85D24"
+            stroke={colors.chart1}
             fill="url(#inputGrad)"
             strokeWidth={2}
             isAnimationActive={false}
@@ -71,7 +73,7 @@ export function TokenAreaChart({ data, loading, granularity }: TokenAreaChartPro
             type="monotone"
             dataKey="output_tokens"
             name={t("analytics.tokenChart.output")}
-            stroke="#10b981"
+            stroke={colors.chart4}
             fill="url(#outputGrad)"
             strokeWidth={2}
             isAnimationActive={false}
@@ -82,14 +84,14 @@ export function TokenAreaChart({ data, loading, granularity }: TokenAreaChartPro
               type="monotone"
               dataKey="cache_read_tokens"
               name={t("analytics.tokenChart.cache")}
-              stroke="#F0A020"
+              stroke={colors.chart3}
               fill="none"
               strokeWidth={1.5}
               isAnimationActive={false}
               strokeDasharray="4 2"
             />
           )}
-          <Brush dataKey="label" height={20} stroke="#e5e7eb" />
+          <Brush dataKey="label" height={20} stroke={colors.border} />
         </AreaChart>
       </ResponsiveContainer>
     </ChartWrapper>

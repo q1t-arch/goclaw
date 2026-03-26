@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { formatBucketTz } from "@/lib/format";
 import { useUiStore } from "@/stores/use-ui-store";
+import { useChartColors } from "@/hooks/use-chart-colors";
 import { ChartWrapper } from "./chart-wrapper";
 import type { SnapshotTimeSeries } from "../hooks/use-usage-analytics";
 
@@ -18,6 +19,7 @@ interface RequestVolumeChartProps {
 export function RequestVolumeChart({ data, loading, granularity }: RequestVolumeChartProps) {
   const { t } = useTranslation("usage");
   const timezone = useUiStore((s) => s.timezone);
+  const colors = useChartColors();
   const isEmpty = !loading && data.length === 0;
 
   const chartData = useMemo(() => data.map((d) => ({
@@ -55,7 +57,7 @@ export function RequestVolumeChart({ data, loading, granularity }: RequestVolume
             yAxisId="left"
             dataKey="request_count"
             name={t("analytics.requestChart.requests")}
-            fill="#E85D24"
+            fill={colors.chart1}
             radius={[2, 2, 0, 0]}
             isAnimationActive={false}
           />
@@ -64,9 +66,9 @@ export function RequestVolumeChart({ data, loading, granularity }: RequestVolume
             type="monotone"
             dataKey="error_count"
             name={t("analytics.requestChart.errors")}
-            stroke="#ef4444"
+            stroke={colors.destructive}
             strokeWidth={2}
-            dot={{ r: 3, fill: "#ef4444" }}
+            dot={{ r: 3, fill: colors.destructive }}
             isAnimationActive={false}
           />
         </ComposedChart>
