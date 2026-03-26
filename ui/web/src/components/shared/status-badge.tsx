@@ -2,11 +2,19 @@ import { cn } from "@/lib/utils";
 
 type Status = "success" | "warning" | "error" | "info" | "default";
 
-const statusClasses: Record<Status, string> = {
-  success: "bg-green-500/15 text-green-600 dark:text-green-400",
-  warning: "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400",
-  error: "bg-red-500/15 text-red-600 dark:text-red-400",
-  info: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+const dotColors: Record<Status, string> = {
+  success: "bg-success",
+  warning: "bg-warning",
+  error: "bg-destructive",
+  info: "bg-info",
+  default: "bg-muted-foreground",
+};
+
+const bgColors: Record<Status, string> = {
+  success: "bg-success/15 text-success dark:text-success",
+  warning: "bg-warning/15 text-warning dark:text-warning",
+  error: "bg-destructive/15 text-destructive dark:text-destructive",
+  info: "bg-info/15 text-info",
   default: "bg-muted text-muted-foreground",
 };
 
@@ -21,18 +29,11 @@ export function StatusBadge({ status, label, className }: StatusBadgeProps) {
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium",
-        statusClasses[status],
+        bgColors[status],
         className,
       )}
     >
-      <span className={cn(
-        "h-1.5 w-1.5 rounded-full",
-        status === "success" && "bg-green-500",
-        status === "warning" && "bg-yellow-500",
-        status === "error" && "bg-red-500",
-        status === "info" && "bg-blue-500",
-        status === "default" && "bg-muted-foreground",
-      )} />
+      <span className={cn("h-1.5 w-1.5 rounded-full", dotColors[status])} />
       {label}
     </span>
   );

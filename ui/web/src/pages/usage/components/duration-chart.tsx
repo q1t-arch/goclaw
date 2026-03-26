@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { formatDuration, formatBucketTz } from "@/lib/format";
 import { useUiStore } from "@/stores/use-ui-store";
+import { useChartColors } from "@/hooks/use-chart-colors";
 import { ChartWrapper } from "./chart-wrapper";
 import type { SnapshotTimeSeries } from "../hooks/use-usage-analytics";
 
@@ -18,6 +19,7 @@ interface DurationChartProps {
 export function DurationChart({ data, loading, granularity }: DurationChartProps) {
   const { t } = useTranslation("usage");
   const timezone = useUiStore((s) => s.timezone);
+  const colors = useChartColors();
   const isEmpty = !loading && data.length === 0;
 
   const chartData = useMemo(() => data.map((d) => ({
@@ -52,7 +54,7 @@ export function DurationChart({ data, loading, granularity }: DurationChartProps
             yAxisId="left"
             dataKey="avg_duration_ms"
             name={t("analytics.durationChart.avgDuration")}
-            fill="#E87820"
+            fill={colors.chart2}
             radius={[2, 2, 0, 0]}
             isAnimationActive={false}
           />
@@ -61,9 +63,9 @@ export function DurationChart({ data, loading, granularity }: DurationChartProps
             type="monotone"
             dataKey="errorRate"
             name={t("analytics.durationChart.errorRate")}
-            stroke="#ef4444"
+            stroke={colors.destructive}
             strokeWidth={2}
-            dot={{ r: 3, fill: "#ef4444" }}
+            dot={{ r: 3, fill: colors.destructive }}
             isAnimationActive={false}
           />
         </ComposedChart>

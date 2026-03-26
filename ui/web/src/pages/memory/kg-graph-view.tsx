@@ -78,9 +78,9 @@ function buildGraph(entities: KGEntity[], relations: KGRelation[]) {
       target: r.target_entity_id,
       label: r.relation_type.replace(/_/g, " "),
       animated: false,
-      style: { stroke: "#94a3b8", strokeWidth: 1.5 },
-      labelStyle: { fontSize: 10, fill: "#64748b" },
-      labelBgStyle: { fill: "#f8fafc", stroke: "#e2e8f0" },
+      style: { stroke: 'var(--border)', strokeWidth: 1.5 },
+      labelStyle: { fontSize: 10, fill: 'var(--muted-foreground)' },
+      labelBgStyle: { fill: 'var(--card)', stroke: 'var(--border)' },
       labelBgPadding: [4, 2] as [number, number],
       labelShowBg: true,
     }));

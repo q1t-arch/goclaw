@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { formatBucketTz } from "@/lib/format";
 import { useUiStore } from "@/stores/use-ui-store";
+import { useChartColors } from "@/hooks/use-chart-colors";
 import { ChartWrapper } from "./chart-wrapper";
 import type { SnapshotTimeSeries } from "../hooks/use-usage-analytics";
 
@@ -18,6 +19,7 @@ interface KnowledgeChartProps {
 export function KnowledgeChart({ data, loading, granularity }: KnowledgeChartProps) {
   const { t } = useTranslation("usage");
   const timezone = useUiStore((s) => s.timezone);
+  const colors = useChartColors();
 
   const hasData = data.some(
     (d) => d.memory_docs > 0 || d.memory_chunks > 0 || d.kg_entities > 0 || d.kg_relations > 0,
@@ -47,10 +49,10 @@ export function KnowledgeChart({ data, loading, granularity }: KnowledgeChartPro
           <YAxis tick={{ fontSize: 11 }} width={40} />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="memory_docs" name={t("analytics.knowledgeChart.memoryDocs")} stroke="#E85D24" strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line type="monotone" dataKey="memory_chunks" name={t("analytics.knowledgeChart.memoryChunks")} stroke="#F8D080" strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line type="monotone" dataKey="kg_entities" name={t("analytics.knowledgeChart.kgEntities")} stroke="#E87820" strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line type="monotone" dataKey="kg_relations" name={t("analytics.knowledgeChart.kgRelations")} stroke="#F0A020" strokeWidth={2} dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="memory_docs" name={t("analytics.knowledgeChart.memoryDocs")} stroke={colors.chart1} strokeWidth={2} dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="memory_chunks" name={t("analytics.knowledgeChart.memoryChunks")} stroke={colors.chart3} strokeWidth={2} dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="kg_entities" name={t("analytics.knowledgeChart.kgEntities")} stroke={colors.chart2} strokeWidth={2} dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="kg_relations" name={t("analytics.knowledgeChart.kgRelations")} stroke={colors.chart4} strokeWidth={2} dot={false} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
     </ChartWrapper>

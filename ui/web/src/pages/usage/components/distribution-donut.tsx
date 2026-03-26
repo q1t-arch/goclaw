@@ -2,12 +2,8 @@ import { useTranslation } from "react-i18next";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 import { ChartWrapper } from "./chart-wrapper";
+import { useChartColors, useChartPalette } from "@/hooks/use-chart-colors";
 import type { SnapshotBreakdown } from "../hooks/use-usage-analytics";
-
-const PALETTE = [
-  "#E85D24", "#10b981", "#E87820", "#ef4444", "#F0A020",
-  "#ec4899", "#f59e0b", "#84cc16", "#F8D080", "#f97316",
-];
 
 const MAX_SLICES = 8;
 
@@ -35,6 +31,8 @@ export function DistributionDonut({
   metric = "request_count",
 }: DistributionDonutProps) {
   const { t } = useTranslation("usage");
+  const palette = useChartPalette();
+  const colors = useChartColors();
 
   const sorted = [...data].sort((a, b) => b[metric] - a[metric]);
   const top = sorted.slice(0, MAX_SLICES);
@@ -77,8 +75,8 @@ export function DistributionDonut({
             {slices.map((entry, idx) => (
               <Cell
                 key={entry.name}
-                fill={PALETTE[idx % PALETTE.length]}
-                stroke={activeValue === entry.name ? "#B83D10" : "transparent"}
+                fill={palette[idx % palette.length]}
+                stroke={activeValue === entry.name ? colors.chart1 : "transparent"}
                 strokeWidth={activeValue === entry.name ? 3 : 0}
                 opacity={activeValue && activeValue !== entry.name ? 0.5 : 1}
               />

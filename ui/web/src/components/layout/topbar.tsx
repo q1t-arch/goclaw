@@ -97,7 +97,7 @@ export function Topbar() {
             <Settings2 className="h-4 w-4" />
             <span
               className={`absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full ${
-                embStatus?.configured ? "bg-emerald-500" : "bg-amber-500"
+                embStatus?.configured ? "bg-success" : "bg-warning"
               }`}
             />
           </button>
@@ -135,8 +135,8 @@ export function Topbar() {
                 }`}
               >
                 <div className="flex gap-0.5">
-                  <div className="h-3 w-3 rounded-full bg-[oklch(0.55_0.15_38)]" />
-                  <div className="h-3 w-3 rounded-full bg-[oklch(0.25_0.02_250)]" />
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.62_0.19_38)]" />
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.15_0.02_45)]" />
                 </div>
                 <span>{t("colorSchemes.default")}</span>
                 {colorScheme === "default" && <Check className="ml-auto h-3.5 w-3.5" />}
@@ -149,8 +149,8 @@ export function Topbar() {
                 }`}
               >
                 <div className="flex gap-0.5">
-                  <div className="h-3 w-3 rounded-full bg-[oklch(0.72_0.24_145)]" />
-                  <div className="h-3 w-3 rounded-full bg-[oklch(0.68_0.20_175)]" />
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.87_0.30_142)]" />
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.08_0.02_145)]" />
                 </div>
                 <span>{t("colorSchemes.neon")}</span>
                 {colorScheme === "neon" && <Check className="ml-auto h-3.5 w-3.5" />}

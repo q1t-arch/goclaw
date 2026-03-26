@@ -208,33 +208,33 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
   const uxItems: FeatureSwitchItem[] = [
     {
       icon: Eye,
-      iconClass: "text-blue-500",
+      iconClass: "text-info",
       label: t("ux.toolStatus"),
       hint: t("ux.toolStatusHint"),
       checked: toolStatus,
       onCheckedChange: setToolStatus,
       infoWhenOn: t("ux.toolStatusInfo"),
-      infoClass: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300",
+      infoClass: "border-info/25 bg-info/10 text-info",
     },
     {
       icon: MessageSquareText,
-      iconClass: "text-emerald-500",
+      iconClass: "text-success",
       label: t("ux.blockReply"),
       hint: t("ux.blockReplyHint"),
       checked: blockReply,
       onCheckedChange: setBlockReply,
       infoWhenOn: t("ux.blockReplyInfo"),
-      infoClass: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300",
+      infoClass: "border-success/30 bg-success/10 text-success dark:border-success/30 dark:bg-success/10 dark:text-success",
     },
     {
       icon: Brain,
-      iconClass: "text-orange-500",
+      iconClass: "text-warning",
       label: t("ux.intentClassify"),
       hint: t("ux.intentClassifyHint"),
       checked: intentClassify,
       onCheckedChange: setIntentClassify,
       infoWhenOn: t("ux.intentClassifyInfo"),
-      infoClass: "border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300",
+      infoClass: "border-warning/25 bg-warning/10 text-warning",
     },
   ];
 
@@ -255,16 +255,16 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
         ) : (
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto -mx-4 px-4 sm:-mx-6 sm:px-6">
             {/* ── Embedding ── */}
-            <Card className="border-blue-200 dark:border-blue-800">
+            <Card className="border-info/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Brain className="h-4 w-4 text-blue-500" />
+                  <Brain className="h-4 w-4 text-info" />
                   {t("embedding.title")}
                 </CardTitle>
                 <CardDescription>{t("embedding.description")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 pt-0">
-                <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
+                <div className="flex items-start gap-2 rounded-md border border-info/25 bg-info/10 px-3 py-2 text-xs text-info">
                   <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <div className="space-y-1">
                     <p>{t("embedding.importance")}</p>
@@ -304,8 +304,8 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
                     <span className={`flex items-center gap-1 text-xs ${
                       embResult.valid
                         ? embResult.dimension_mismatch
-                          ? "text-amber-600 dark:text-amber-400"
-                          : "text-emerald-600 dark:text-emerald-400"
+                          ? "text-warning"
+                          : "text-success dark:text-success"
                         : "text-destructive"
                     }`}>
                       {embResult.valid ? (
@@ -371,7 +371,7 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
 
                 <div className="flex items-start justify-between gap-4 border-b py-4">
                   <div className="flex items-start gap-3">
-                    <Archive className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+                    <Archive className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
                     <div className="space-y-0.5">
                       <Label className="text-sm font-medium">{t("compaction.threshold")}</Label>
                       <p className="text-xs text-muted-foreground">{t("compaction.thresholdHint")}</p>
@@ -387,7 +387,7 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
 
                 <div className="flex items-start justify-between gap-4 border-b py-4">
                   <div className="flex items-start gap-3">
-                    <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+                    <Clock className="mt-0.5 h-4 w-4 shrink-0 text-info" />
                     <div className="space-y-0.5">
                       <Label className="text-sm font-medium">{t("compaction.keepRecent")}</Label>
                       <p className="text-xs text-muted-foreground">{t("compaction.keepRecentHint")}</p>
@@ -403,7 +403,7 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
 
                 <div className="flex items-start justify-between gap-4 border-b py-4">
                   <div className="flex items-start gap-3">
-                    <Hash className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+                    <Hash className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
                     <div className="space-y-0.5">
                       <Label className="text-sm font-medium">{t("compaction.maxTokens")}</Label>
                       <p className="text-xs text-muted-foreground">{t("compaction.maxTokensHint")}</p>
@@ -417,7 +417,7 @@ export function SystemSettingsModal({ open, onOpenChange }: SystemSettingsModalP
                   />
                 </div>
 
-                <div className="flex items-start gap-2 rounded-md border border-orange-200 bg-orange-50 px-3 py-2 mt-4 text-xs text-orange-700 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-300">
+                <div className="flex items-start gap-2 rounded-md border border-warning/25 bg-warning/10 px-3 py-2 mt-4 text-xs text-warning">
                   <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <span>{t("compaction.info")}</span>
                 </div>

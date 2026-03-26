@@ -139,7 +139,7 @@ function MediaBadge({ mediaType }: { mediaType: string }) {
   const label = t(`media.${mediaType}`, { defaultValue: mediaType });
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300">
+    <span className="inline-flex items-center gap-1.5 rounded-md border border-info/25 bg-info/10 px-2 py-1 text-xs font-medium text-info">
       <Icon className="h-3.5 w-3.5" />
       {label} {t("media.attached")}
     </span>
@@ -149,11 +149,11 @@ function MediaBadge({ mediaType }: { mediaType: string }) {
 function ForwardBadge({ from, date }: { from: string; date: string }) {
   const { t } = useTranslation("chat");
   return (
-    <div className="flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
+    <div className="flex items-center gap-1.5 rounded-md border border-warning/25 bg-warning/10 px-2.5 py-1 text-xs text-warning">
       <Forward className="h-3.5 w-3.5" />
       <span>
         {t("forwardedFrom")} <span className="font-medium">{from}</span>
-        {date && <span className="text-amber-600 dark:text-amber-400"> &middot; {date}</span>}
+        {date && <span className="text-warning/80"> &middot; {date}</span>}
       </span>
     </div>
   );
@@ -237,7 +237,7 @@ function FileBlock({ name: rawName, mime, content }: { name: string; mime: strin
 
 function LocationBadge({ lat, lng }: { lat: string; lng: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-2 py-1 text-xs font-medium text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300">
+    <span className="inline-flex items-center gap-1.5 rounded-md border border-success/25 bg-success/10 px-2 py-1 text-xs font-medium text-success">
       <MapPin className="h-3.5 w-3.5" />
       {lat}, {lng}
     </span>
