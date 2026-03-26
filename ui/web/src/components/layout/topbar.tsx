@@ -149,7 +149,7 @@ export function Topbar() {
                 }`}
               >
                 <div className="flex gap-0.5">
-                  <div className="h-3 w-3 rounded-full bg-[oklch(0.72_0.24_145)]" />
+                  <div className="h-3 w-3 rounded-full bg-[oklch(0.87_0.30_142)]" />
                   <div className="h-3 w-3 rounded-full bg-[oklch(0.08_0.02_145)]" />
                 </div>
                 <span>{t("colorSchemes.neon")}</span>
