@@ -1,0 +1,39 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [local]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host:     ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key:      ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -e
+
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            echo "==> Pulling latest local branch..."
+            git pull origin local
+
+            echo "==> Building..."
+            go build -o goclaw .
+
+            echo "==> Running migrations..."
+            ./goclaw migrate up
+
+            echo "==> Restarting service..."
+            sudo systemctl restart ${{ secrets.DEPLOY_SERVICE }}
+
+            echo "==> Done. Service status:"
+            sudo systemctl status ${{ secrets.DEPLOY_SERVICE }} --no-pager -l

@@ -1,0 +1,140 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 4 * * *' # Every day at 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/nextlevelbuilder/goclaw.git
+
+      - name: Fetch all
+        run: |
+          git fetch upstream
+          git fetch origin
+
+      # ── Step 1: sync main with upstream ──────────────────────────────────────
+      - name: Sync main with upstream
+        id: sync_main
+        run: |
+          git checkout main
+          if git merge --ff-only upstream/main; then
+            git push origin main
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            # Diverged — upstream has non-linear history, use reset
+            git reset --hard upstream/main
+            git push --force-with-lease origin main
+            echo "updated=true" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Step 2: check if local branch exists ─────────────────────────────────
+      - name: Check local branch
+        id: check_local
+        run: |
+          if git ls-remote --heads origin local | grep -q 'refs/heads/local'; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No 'local' branch found — skipping rebase."
+          fi
+
+      # ── Step 3: rebase local on updated main ─────────────────────────────────
+      - name: Rebase local on main
+        if: steps.check_local.outputs.exists == 'true'
+        id: rebase
+        run: |
+          git checkout local
+          if git rebase main; then
+            git push --force-with-lease origin local
+            echo "status=ok" >> $GITHUB_OUTPUT
+          else
+            git rebase --abort
+            echo "status=conflict" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Step 4: gather conflict info and open issue for @claude ──────────────
+      - name: Collect conflict details
+        if: steps.check_local.outputs.exists == 'true' && steps.rebase.outputs.status == 'conflict'
+        id: details
+        run: |
+          git checkout local
+
+          # Run rebase again just to capture output (will fail again — that's expected)
+          git rebase main 2>&1 | tee /tmp/rebase_log.txt || true
+
+          CONFLICTS=$(git diff --name-only --diff-filter=U 2>/dev/null | head -40 || echo "")
+          git rebase --abort
+
+          # New migrations added by upstream since our last sync
+          MIGRATIONS=$(git log main..upstream/main --diff-filter=A --name-only --format='' -- 'migrations/*.sql' 2>/dev/null | sort -u || echo "")
+
+          echo "conflicts<<ENDOFBLOCK" >> $GITHUB_OUTPUT
+          echo "$CONFLICTS"            >> $GITHUB_OUTPUT
+          echo "ENDOFBLOCK"            >> $GITHUB_OUTPUT
+
+          echo "migrations<<ENDOFBLOCK" >> $GITHUB_OUTPUT
+          echo "$MIGRATIONS"            >> $GITHUB_OUTPUT
+          echo "ENDOFBLOCK"             >> $GITHUB_OUTPUT
+
+          # Persist rebase log as artifact-friendly file
+          cp /tmp/rebase_log.txt /tmp/conflict_summary.txt
+
+      - name: Create conflict issue
+        if: steps.check_local.outputs.exists == 'true' && steps.rebase.outputs.status == 'conflict'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conflicts  = `${{ steps.details.outputs.conflicts }}`.trim();
+            const migrations = `${{ steps.details.outputs.migrations }}`.trim();
+
+            const migrationSection = migrations
+              ? `### ⚠️ New upstream migrations\n\nThese migration files were added upstream — verify they don't conflict with local schema changes and that \`internal/upgrade/version.go\` is bumped correctly:\n\`\`\`\n${migrations}\n\`\`\``
+              : '';
+
+            const body = `## Upstream sync conflict
+
+@claude The daily upstream sync failed to rebase the \`local\` branch onto updated \`main\`. Please resolve the conflicts.
+
+### Conflicting files
+\`\`\`
+${conflicts || '(unable to determine — check rebase log)'}
+\`\`\`
+
+${migrationSection}
+
+### Resolution steps
+1. Checkout \`local\` branch: \`git checkout local\`
+2. Rebase: \`git rebase main\`
+3. For each conflict: prefer upstream changes unless the local patch is intentional
+4. For migration conflicts: keep both migration files with correct sequential numbering; bump \`RequiredSchemaVersion\` in \`internal/upgrade/version.go\`
+5. Push: \`git push --force-with-lease origin local\`
+
+> Created automatically by the sync-upstream workflow.`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🔀 Upstream sync conflict — @claude please resolve',
+              body,
+              labels: ['sync-conflict'],
+            });
