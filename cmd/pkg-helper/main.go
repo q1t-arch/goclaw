@@ -180,7 +180,7 @@ func persistAdd(pkg string) {
 	listFile := pkgListFile()
 
 	if data, err := os.ReadFile(listFile); err == nil {
-		for _, line := range strings.Split(string(data), "\n") {
+		for line := range strings.SplitSeq(string(data), "\n") {
 			if strings.TrimSpace(line) == pkg {
 				return
 			}
@@ -215,7 +215,7 @@ func persistRemove(pkg string) {
 	}
 
 	var kept []string
-	for _, line := range strings.Split(string(data), "\n") {
+	for line := range strings.SplitSeq(string(data), "\n") {
 		line = strings.TrimSpace(line)
 		if line != "" && line != pkg {
 			kept = append(kept, line)
