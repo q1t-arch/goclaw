@@ -385,6 +385,37 @@ export function useChatMessages(sessionKey: string, agentId: string) {
           ]);
           break;
         }
+        // User-initiated cancellation — clear state, preserve partial content.
+        case "run.cancelled": {
+          cancelAnimationFrame(rafHandleRef.current);
+          rafPendingRef.current = false;
+
+          setIsRunning(false);
+          runIdRef.current = null;
+
+          const streamed = streamRef.current;
+          setStreamText(null);
+          setThinkingText(null);
+          setToolStream([]);
+          streamRef.current = "";
+          thinkingRef.current = "";
+          toolStreamRef.current = [];
+          activityRef.current = null;
+          setActivity(null);
+          blockRepliesRef.current = [];
+          setBlockReplies([]);
+
+          // Promote partial streamed text or reload history
+          if (streamed) {
+            setMessages((prev) => [
+              ...prev,
+              { role: "assistant", content: streamed, timestamp: Date.now() },
+            ]);
+          } else {
+            loadHistory();
+          }
+          break;
+        }
       }
     },
     [loadHistory],
@@ -406,8 +437,15 @@ export function useChatMessages(sessionKey: string, agentId: string) {
         progress_percent?: number;
         progress_step?: string;
         reason?: string;
+        channel?: string;
       };
       if (!event?.team_id) return;
+
+      // Only process team task events from WS channel (matches handleAgentEvent filter).
+      // Prevents channel events (Telegram, Discord, etc.) leaking into web UI chat.
+      if (event.channel && event.channel !== "ws") {
+        return;
+      }
 
       setTeamTasks((prev) => {
         const existing = prev.find((t) => t.taskId === event.task_id);

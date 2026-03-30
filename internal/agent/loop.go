@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"runtime"
 	"sort"
 	"sync"
 	"time"
@@ -20,7 +21,29 @@ import (
 	"github.com/nextlevelbuilder/goclaw/pkg/protocol"
 )
 
-func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) {
+// indexedResult holds the output of a single parallel tool execution, preserving
+// the original call index so results can be sorted back into deterministic order.
+type indexedResult struct {
+	idx          int
+	tc           providers.ToolCall
+	registryName string
+	result       *tools.Result
+	argsJSON     string
+	spanStart    time.Time
+}
+
+func (l *Loop) runLoop(ctx context.Context, req RunRequest) (result *RunResult, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			buf := make([]byte, 8192)
+			n := runtime.Stack(buf, false)
+			slog.Error("agent loop panicked", "agent", l.id, "session", req.SessionKey,
+				"panic", fmt.Sprint(r), "stack", string(buf[:n]))
+			result = nil
+			err = fmt.Errorf("agent loop panic: %v", r)
+		}
+	}()
+
 	// Per-run emit wrapper: enriches every AgentEvent with delegation + routing context.
 	emitRun := func(event AgentEvent) {
 		event.RunKind = req.RunKind
@@ -203,12 +226,21 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 		// channel type, and final-iteration stripping.
 		var toolDefs []providers.ToolDefinition
 		var allowedTools map[string]bool
+		// Resolve per-user MCP tools (servers requiring user credentials).
+		// Must run before buildFilteredTools so tools are in the Registry for policy filtering.
+		if req.UserID != "" {
+			l.getUserMCPTools(iterCtx, req.UserID)
+		}
 		toolDefs, allowedTools, messages = l.buildFilteredTools(&req, hadBootstrap, rs.iteration, maxIter, messages)
 
-		// Use per-request model override if set (e.g. heartbeat uses cheaper model).
+		// Use per-request overrides if set (e.g. heartbeat uses cheaper provider/model).
 		model := l.model
+		provider := l.provider
 		if req.ModelOverride != "" {
 			model = req.ModelOverride
+		}
+		if req.ProviderOverride != nil {
+			provider = req.ProviderOverride
 		}
 
 		chatReq := providers.ChatRequest{
@@ -231,11 +263,11 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 			chatReq.Options[providers.OptTenantID] = tid.String()
 		}
 		if l.thinkingLevel != "" && l.thinkingLevel != "off" {
-			if tc, ok := l.provider.(providers.ThinkingCapable); ok && tc.SupportsThinking() {
+			if tc, ok := provider.(providers.ThinkingCapable); ok && tc.SupportsThinking() {
 				chatReq.Options[providers.OptThinkingLevel] = l.thinkingLevel
 			} else {
 				slog.Debug("thinking_level ignored: provider does not support thinking",
-					"provider", l.provider.Name(), "level", l.thinkingLevel)
+					"provider", provider.Name(), "level", l.thinkingLevel)
 			}
 		}
 
@@ -248,7 +280,7 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 		llmSpanID := l.emitLLMSpanStart(callCtx, llmSpanStart, rs.iteration, messages)
 
 		if req.Stream {
-			resp, err = l.provider.ChatStream(callCtx, chatReq, func(chunk providers.StreamChunk) {
+			resp, err = provider.ChatStream(callCtx, chatReq, func(chunk providers.StreamChunk) {
 				if chunk.Thinking != "" {
 					emitRun(AgentEvent{
 						Type:    protocol.ChatEventThinking,
@@ -267,7 +299,7 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 				}
 			})
 		} else {
-			resp, err = l.provider.Chat(callCtx, chatReq)
+			resp, err = provider.Chat(callCtx, chatReq)
 		}
 
 		if err != nil {
@@ -304,24 +336,48 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 			rs.totalUsage.ThinkingTokens += resp.Usage.ThinkingTokens
 		}
 
-		// Mid-loop compaction: same threshold as maybeSummarize (contextWindow * historyShare)
-		// but applied to in-memory messages during the run. Prevents context overflow for
-		// long-running agents (e.g. delegated research tasks that accumulate many tool results).
+		// Mid-loop context management: uses history-only token count (excludes overhead
+		// from system prompt, tool definitions, context files) for threshold comparison.
+		// Two-phase approach: prune old tool results first, then compact only if still over budget.
 		if !rs.midLoopCompacted && l.contextWindow > 0 {
 			historyShare := config.DefaultHistoryShare
 			if l.compactionCfg != nil && l.compactionCfg.MaxHistoryShare > 0 {
 				historyShare = l.compactionCfg.MaxHistoryShare
 			}
-			threshold := int(float64(l.contextWindow) * historyShare)
+			historyBudget := int(float64(l.contextWindow) * historyShare)
 
-			promptTokens := 0
-			if resp.Usage != nil && resp.Usage.PromptTokens > 0 {
-				promptTokens = resp.Usage.PromptTokens
-			} else {
-				promptTokens = EstimateTokens(messages)
+			// Calibrate overhead on first LLM response with usage data.
+			if !rs.overheadCalibrated && resp.Usage != nil && resp.Usage.PromptTokens > 0 {
+				historyEst := EstimateHistoryTokens(messages)
+				rs.overheadTokens = max(resp.Usage.PromptTokens-historyEst, 0)
+				rs.overheadCalibrated = true
 			}
 
-			if promptTokens >= threshold {
+			// Compute history-only token count (excludes system prompt/tools overhead).
+			historyTokens := 0
+			if resp.Usage != nil && resp.Usage.PromptTokens > 0 && rs.overheadCalibrated {
+				historyTokens = resp.Usage.PromptTokens - rs.overheadTokens
+			} else {
+				historyTokens = EstimateHistoryTokens(messages)
+			}
+
+			// Phase 1: Prune old tool results before resorting to full compaction (at 70% of budget).
+			if historyTokens >= int(float64(historyBudget)*0.7) && !rs.midLoopPruned {
+				rs.midLoopPruned = true
+				pruned := pruneContextMessages(messages, l.contextWindow, l.contextPruningCfg)
+				if len(pruned) > 0 {
+					messages = pruned
+					historyTokens = EstimateHistoryTokens(messages)
+				}
+				slog.Info("mid_loop_pruning",
+					"agent", l.id,
+					"history_tokens", historyTokens,
+					"budget", historyBudget,
+					"overhead", rs.overheadTokens)
+			}
+
+			// Phase 2: Full compaction only if still over budget after pruning.
+			if historyTokens >= historyBudget {
 				rs.midLoopCompacted = true
 				emitRun(AgentEvent{
 					Type:    protocol.AgentEventActivity,
@@ -334,8 +390,9 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 				}
 				slog.Info("mid_loop_compaction",
 					"agent", l.id,
-					"prompt_tokens", promptTokens,
-					"threshold", threshold,
+					"history_tokens", historyTokens,
+					"budget", historyBudget,
+					"overhead", rs.overheadTokens,
 					"context_window", l.contextWindow)
 			}
 		}
@@ -517,14 +574,6 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 			// Each goroutine performs lazy MCP activation + policy checking independently.
 			// Tool instances are immutable (context-based) so concurrent access is safe.
 			// Results are collected then processed sequentially for deterministic ordering.
-			type indexedResult struct {
-				idx          int
-				tc           providers.ToolCall
-				registryName string
-				result       *tools.Result
-				argsJSON     string
-				spanStart    time.Time
-			}
 
 			// 1. Emit all tool.call events upfront (client sees all calls starting)
 			for _, tc := range resp.ToolCalls {
@@ -591,10 +640,21 @@ func (l *Loop) runLoop(ctx context.Context, req RunRequest) (*RunResult, error) 
 			// Close channel after all goroutines complete (run in separate goroutine to avoid deadlock)
 			go func() { wg.Wait(); close(resultCh) }()
 
-			// 3. Collect results
+			// 3. Collect results (respect context cancellation to allow /stop)
 			collected := make([]indexedResult, 0, len(resp.ToolCalls))
-			for r := range resultCh {
-				collected = append(collected, r)
+		collectLoop:
+			for range resp.ToolCalls {
+				select {
+				case r, ok := <-resultCh:
+					if !ok {
+						break collectLoop
+					}
+					collected = append(collected, r)
+				case <-ctx.Done():
+					// Trade-off: responsive /stop cancellation skips finalizeRun() cleanup
+					// (bootstrap cleanup, message flush). Stuck agent is worse than lost finalization.
+					return nil, ctx.Err()
+				}
 			}
 
 			// 4. Sort by original index → deterministic message ordering

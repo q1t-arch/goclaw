@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"os"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -83,6 +85,11 @@ type Manager struct {
 	deferredTools  map[string]*BridgeTool // registeredName → BridgeTool
 	activatedTools map[string]struct{}     // tracks activated tool names for group:mcp
 	searchMode     bool
+
+	// User-credential servers: servers requiring per-user credentials, stored during
+	// LoadForAgent("") for later per-request tool resolution. These servers are NOT
+	// connected at startup — connections are created per-user via pool.AcquireUser().
+	userCredServers []store.MCPAccessInfo
 }
 
 // ManagerOption configures the Manager.
@@ -136,7 +143,7 @@ func (m *Manager) Start(ctx context.Context) error {
 			continue
 		}
 
-		if err := m.connectServer(ctx, name, cfg.Transport, cfg.Command, cfg.Args, cfg.Env, cfg.URL, cfg.Headers, cfg.ToolPrefix, cfg.TimeoutSec); err != nil {
+		if err := m.connectServer(ctx, name, cfg.Transport, cfg.Command, cfg.Args, cfg.Env, cfg.URL, resolveEnvVars(cfg.Headers), cfg.ToolPrefix, cfg.TimeoutSec); err != nil {
 			slog.Warn("mcp.server.connect_failed", "server", name, "error", err)
 			errs = append(errs, fmt.Sprintf("%s: %v", name, err))
 		}
@@ -179,7 +186,7 @@ func (m *Manager) resolveServerCredentials(ctx context.Context, info store.MCPAc
 
 	args := jsonBytesToStringSlice(srv.Args)
 	env := jsonBytesToStringMap(srv.Env)
-	headers := jsonBytesToStringMap(srv.Headers)
+	headers := resolveEnvVars(jsonBytesToStringMap(srv.Headers))
 
 	// Inject APIKey into headers if present (bug fix: was never passed to connections)
 	if srv.APIKey != "" && headers["Authorization"] == "" {
@@ -276,8 +283,17 @@ func (m *Manager) LoadForAgent(ctx context.Context, agentID uuid.UUID, userID st
 
 	// Unregister all existing MCP tools first
 	m.unregisterAllTools()
+	m.userCredServers = nil
 
 	for _, info := range accessible {
+		// When loading at startup (userID=""), store servers requiring per-user
+		// credentials for later per-request resolution instead of skipping them.
+		if userID == "" && requireUserCreds(info.Server.Settings) && info.Server.Enabled {
+			m.userCredServers = append(m.userCredServers, info)
+			slog.Debug("mcp.server.deferred_user_creds", "server", info.Server.Name)
+			continue
+		}
+
 		rs := m.resolveServerCredentials(ctx, info, userID)
 		if rs == nil {
 			continue
@@ -492,6 +508,19 @@ func (m *Manager) ServerStatus() []ServerStatus {
 		})
 	}
 	return statuses
+}
+
+// resolveEnvVars returns a copy of m with "env:VARNAME" values resolved to os.Getenv("VARNAME").
+func resolveEnvVars(m map[string]string) map[string]string {
+	out := make(map[string]string, len(m))
+	for k, v := range m {
+		if after, ok := strings.CutPrefix(v, "env:"); ok {
+			out[k] = os.Getenv(after)
+		} else {
+			out[k] = v
+		}
+	}
+	return out
 }
 
 // requireUserCreds checks if an MCP server's settings mandate per-user credentials.
